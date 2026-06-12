@@ -7,12 +7,14 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 ## 00-system
 
 - [[SCHEMA]] — frontmatter standard, enum values, layer↔folder mapping
-- [[ROUTER]] — classification decision tree + four storage judgment rules
+- [[ROUTER]] — security pre-check + classification decision tree + four storage judgment rules
 - [[LOOP]] — seven-step operating loop + Learn Back mapping table
+- [[SECURITY]] — no secret values, private layers, output review rules
 - [[GLOSSARY]] — terminology
 - [[INDEX]] — this file
 - [[LOG]] — change history
-- `templates/` — note templates: concept, entity, comparison, skill, failure-pattern, decision, audit
+- `templates/` — 11 note templates: concept, entity, comparison, skill, failure-pattern, decision, audit, rubric, verification, run, handoff
+- `../scripts/lint.mjs` — zero-dependency validator (schema, enums, layer placement, wikilinks, INDEX consistency, secret patterns)
 
 ## 10-sources
 

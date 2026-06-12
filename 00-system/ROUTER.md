@@ -3,6 +3,10 @@
 The rules for deciding which layer an input (material, experience, request, result) is stored in.
 Run every intake through this tree from the top. **The first match is the storage location.**
 
+## Security pre-check (before classification)
+
+Per [[SECURITY]]: never store secret values (store their names/locations instead); minimize personal data in sources; never force-add layer files to git; review outputs before they leave the machine. An input that fails this check is not stored.
+
 ## Classification decision tree
 
 ```text

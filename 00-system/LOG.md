@@ -13,3 +13,4 @@ Append-only change history. Format: `YYYY-MM-DD | change | note`
 - 2026-06-12 | System translated to English, README/README.ko/LICENSE/.gitignore added, root CLAUDE.md+AGENTS.md, custom adapter guide | public distribution prep
 - 2026-06-12 | Three-stores model (Memory/Brain/Vault) formalized as loading view over the seven layers | README, README.ko, GLOSSARY
 - 2026-06-12 | Hermes install point corrected: per-profile SOUL.md (session-loaded), nothing installed in brain | brain-pointer approach deprecated as a layer violation
+- 2026-06-12 | scripts/lint.mjs (schema/index/wikilink/secret validator), 4 new templates (rubric, verification, run, handoff), SECURITY.md + ROUTER pre-check, adapter compliance checklist | hardening pass

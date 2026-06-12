@@ -46,4 +46,6 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 레이어에 저장되는 개인 지식은 gitignore 처리되어 추적되지 않습니다 — 클론 후 사적으로 사용하면서 시스템 업데이트만 pull 받을 수 있습니다.
 
+검증: `bun scripts/lint.mjs` (또는 node) — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴 검사. 보안 규칙은 `00-system/SECURITY.md`.
+
 라이선스: [MIT](LICENSE)

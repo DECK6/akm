@@ -82,15 +82,26 @@ Your notes can be in any language — only the system files are English.
 
 Full decision tree: [`00-system/ROUTER.md`](00-system/ROUTER.md).
 
+## Linting
+
+Validate your instance — frontmatter schema, enum values, layer placement, broken wikilinks, INDEX consistency, and common secret patterns:
+
+```bash
+node scripts/lint.mjs    # or: bun scripts/lint.mjs
+```
+
+Schema violations are errors (exit 1); link/index/secret findings are warnings. Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`00-system/SECURITY.md`](00-system/SECURITY.md).
+
 ## Repository structure
 
 ```text
 akm/
 ├── README.md
 ├── 00-system/          # SCHEMA (frontmatter standard), ROUTER (classification),
-│   │                   # LOOP (operating loop), GLOSSARY, INDEX, LOG
-│   └── templates/      # note templates: concept, entity, comparison, skill,
-│                       # failure-pattern, decision, audit
+│   │                   # LOOP (operating loop), SECURITY, GLOSSARY, INDEX, LOG
+│   └── templates/      # 11 note templates: concept, entity, comparison, skill,
+│                       # failure-pattern, decision, audit, rubric, verification,
+│                       # run, handoff
 ├── 10-sources/         ┐
 ├── 20-knowledge/       │
 ├── 30-context/         │
@@ -100,7 +111,8 @@ akm/
 ├── 70-evaluation/      │
 ├── 80-outputs/         │
 ├── 90-archive/         ┘
-└── adapters/           # thin entry points per harness
+├── adapters/           # thin entry points per harness
+└── scripts/            # lint.mjs — zero-dependency instance validator
 ```
 
 The repo distributes the *system* (`00-system/`, `adapters/`, templates). What you store in the layers is *your instance* and is gitignored — clone once, use privately, pull system updates without conflicts.

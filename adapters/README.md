@@ -28,6 +28,19 @@ When a harness has its own memory (Claude Code auto-memory, OpenClaw `MEMORY.md`
 2. Zero-setup alternative: run your agent **inside the cloned repo** — the root `CLAUDE.md` and `AGENTS.md` already contain the rules with relative paths
 3. Verify in a fresh session: ask the agent to find and to store something, and check it follows ROUTER
 
+## Compliance checklist (after install)
+
+Run a fresh session and verify the agent actually follows the system — installation is not compliance:
+
+- [ ] Reads `40-memory/` and `00-system/INDEX.md` before using knowledge
+- [ ] Consults `00-system/ROUTER.md` before storing anything (ask it to store a preference and a procedure; check where they land)
+- [ ] Consults `00-system/LOOP.md` on failure and records under `70-evaluation/`
+- [ ] Updates `INDEX.md` and appends to `LOG.md` when creating notes — without being asked
+- [ ] Does not duplicate content between its native memory and AKM (one body, pointers elsewhere)
+- [ ] Refuses to store secret values, per `00-system/SECURITY.md`
+
+A worked test script for this checklist is in [custom/README.md](custom/README.md) ("Verify your adapter").
+
 ## Adapters
 
 - [claude-code](claude-code/README.md) — `CLAUDE.md` snippet + auto-memory / skills division
