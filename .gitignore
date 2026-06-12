@@ -1,0 +1,49 @@
+# ── Instance data: your knowledge stays local ──────────────────
+# The repo distributes the system (00-system, adapters, templates).
+# Everything stored in the layers below is your private instance.
+
+10-sources/**
+!10-sources/**/
+!10-sources/**/.gitkeep
+
+20-knowledge/**
+!20-knowledge/**/
+!20-knowledge/**/.gitkeep
+
+30-context/**
+!30-context/**/
+!30-context/**/.gitkeep
+
+40-memory/**
+!40-memory/**/
+!40-memory/**/.gitkeep
+
+50-procedures/**
+!50-procedures/**/
+!50-procedures/**/.gitkeep
+
+60-actions/**
+!60-actions/**/
+!60-actions/**/.gitkeep
+
+70-evaluation/**
+!70-evaluation/**/
+!70-evaluation/**/.gitkeep
+
+80-outputs/**
+!80-outputs/**/
+!80-outputs/**/.gitkeep
+
+90-archive/**
+!90-archive/**/
+!90-archive/**/.gitkeep
+
+# ── Maintainer-local files (build plan, personal mappings) ─────
+/00-system/INDEX.local.md
+/PLAN.md
+/00-system/MAPPING-DECK.md
+/00-system/MAPPING-HERMES.md
+/adapters/hermes/
+
+# ── OS noise ───────────────────────────────────────────────────
+.DS_Store
