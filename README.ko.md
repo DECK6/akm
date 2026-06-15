@@ -46,6 +46,8 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 레이어에 저장되는 개인 지식은 gitignore 처리되어 추적되지 않습니다 — 클론 후 사적으로 사용하면서 시스템 업데이트만 pull 받을 수 있습니다.
 
-검증: `bun scripts/lint.mjs` (또는 node) — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴 검사. 보안 규칙은 `00-system/SECURITY.md`.
+OKF 호환 export: 내부 AKM schema는 유지하고 외부 공유용 bundle만 OKF 형태로 내보냅니다. `node scripts/export-okf.mjs --out dist/okf` 후 `node scripts/lint.mjs --okf-export dist/okf`로 검사합니다. 세부 규칙은 `00-system/OKF-COMPAT.md`.
+
+검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. 보안 규칙은 `00-system/SECURITY.md`.
 
 라이선스: [MIT](LICENSE)

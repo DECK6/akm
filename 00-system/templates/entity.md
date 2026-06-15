@@ -31,6 +31,6 @@ tags: []
 
 - [[related note]]
 
-## Sources
+## Citations
 
 - (URL, document, ingested note)

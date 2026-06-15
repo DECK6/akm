@@ -10,11 +10,15 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 - [[ROUTER]] — security pre-check + classification decision tree + four storage judgment rules
 - [[LOOP]] — seven-step operating loop + Learn Back mapping table
 - [[SECURITY]] — no secret values, private layers, output review rules
+- [[OKF-COMPAT]] — OKF-compatible export/import boundary, field mapping, indexes, and lint expectations
+- [[MANIFEST]] — AKM and OKF compatibility version declarations
 - [[GLOSSARY]] — terminology
 - [[INDEX]] — this file
 - [[LOG]] — change history
 - `templates/` — 11 note templates: concept, entity, comparison, skill, failure-pattern, decision, audit, rubric, verification, run, handoff
-- `../scripts/lint.mjs` — zero-dependency validator (schema, enums, layer placement, wikilinks, INDEX consistency, secret patterns)
+- `../scripts/lint.mjs` — zero-dependency validator (AKM strict mode, OKF export mode, links, secrets)
+- `../scripts/export-okf.mjs` — exports selected AKM layers as an OKF-compatible bundle
+- `../scripts/index.mjs` — generates directory-level `INDEX.local.md` or OKF `index.md` files
 
 ## 10-sources
 
@@ -56,3 +60,7 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 - [openclaw](../adapters/openclaw/README.md) — AGENTS.md snippet + MEMORY.md/daily-log division
 - [custom](../adapters/custom/README.md) — write an adapter for any agent
 
+## examples
+
+- [minimal-akm](../examples/minimal-akm/) — small public AKM fixture showing ingest, compile, contextualize, execute, verify, learn back
+- [okf-export](../examples/okf-export/) — OKF-compatible export generated from the minimal fixture

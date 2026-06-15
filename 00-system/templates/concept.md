@@ -27,6 +27,6 @@ tags: []
 
 - [[related note]] — how it relates
 
-## Sources
+## Citations
 
 - [[original note in 10-sources]] or external source

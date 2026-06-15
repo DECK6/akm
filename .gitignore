@@ -45,5 +45,8 @@
 /00-system/MAPPING-HERMES.md
 /adapters/hermes/
 
+# ── Generated exports ─────────────────────────────────────────
+/dist/
+
 # ── OS noise ───────────────────────────────────────────────────
 .DS_Store

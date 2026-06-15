@@ -82,15 +82,29 @@ Your notes can be in any language — only the system files are English.
 
 Full decision tree: [`00-system/ROUTER.md`](00-system/ROUTER.md).
 
+## OKF export
+
+AKM can export selected layers as an OKF-compatible Markdown bundle without changing the internal AKM schema:
+
+```bash
+node scripts/export-okf.mjs --out dist/okf
+node scripts/lint.mjs --okf-export dist/okf
+```
+
+The export maps `akmType` to OKF `type`, keeps `akmType` internal, converts wikilinks to standard Markdown links, writes root `okf_version: "0.1"` metadata, and generates lowercase `index.md` files for OKF consumers. See [`00-system/OKF-COMPAT.md`](00-system/OKF-COMPAT.md).
+
 ## Linting
 
 Validate your instance — frontmatter schema, enum values, layer placement, broken wikilinks, INDEX consistency, and common secret patterns:
 
 ```bash
-node scripts/lint.mjs    # or: bun scripts/lint.mjs
+node scripts/lint.mjs --akm
+node scripts/lint.mjs --links
+node scripts/lint.mjs --secrets
+node scripts/lint.mjs --okf-export ./dist/okf
 ```
 
-Schema violations are errors (exit 1); link/index/secret findings are warnings. Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`00-system/SECURITY.md`](00-system/SECURITY.md).
+Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`00-system/SECURITY.md`](00-system/SECURITY.md).
 
 ## Repository structure
 
@@ -112,7 +126,8 @@ akm/
 ├── 80-outputs/         │
 ├── 90-archive/         ┘
 ├── adapters/           # thin entry points per harness
-└── scripts/            # lint.mjs — zero-dependency instance validator
+├── examples/           # minimal fixture + OKF export sample
+└── scripts/            # lint, OKF export, directory index generation
 ```
 
 The repo distributes the *system* (`00-system/`, `adapters/`, templates). What you store in the layers is *your instance* and is gitignored — clone once, use privately, pull system updates without conflicts.

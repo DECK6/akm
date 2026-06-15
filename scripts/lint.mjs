@@ -1,190 +1,271 @@
 #!/usr/bin/env node
-// AKM lint — zero-dependency validator for an AKM instance.
-// Usage: node scripts/lint.mjs [path-to-akm-root]   (bun also works)
+// AKM lint — zero-dependency validators for AKM roots and OKF export bundles.
 //
-// Errors (exit 1)
-//   E1  frontmatter missing or unparsable
-//   E2  required field missing (description, akmLayer, akmType, trustLevel, date created, date modified)
-//   E3  akmLayer does not match the folder the note lives in
-//   E4  akmType not valid for the layer
-//   E5  enum field holds a disallowed value (trustLevel, akmRole, CMDS, sourceType, nextAction)
-//   E6  date not in YYYY-MM-DD format
-//   E7  source note without sourcePath
-//   E8  note in 90-archive/ without trustLevel: deprecated
-// Warnings (exit 0)
-//   W1  unresolved wikilink (skipped in 10-sources/ snapshots and 00-system/templates/)
-//   W2  layer note not listed in INDEX.md / INDEX.local.md
-//   W3  text matching a common secret pattern (API key, token, private key)
+// Usage:
+//   node scripts/lint.mjs
+//   node scripts/lint.mjs --akm [path-to-akm-root]
+//   node scripts/lint.mjs --okf-export <path-to-okf-bundle>
+//   node scripts/lint.mjs --links [path]
+//   node scripts/lint.mjs --secrets [path]
 
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, dirname, relative } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
+import {
+  DATE_RE,
+  ENUMS,
+  LAYER_BY_DIR,
+  LIST_FIELDS,
+  REQUIRED,
+  SECRET_PATTERNS,
+  TYPES_BY_LAYER,
+  buildMarkdownIndex,
+  findMarkdownLinks,
+  layerNotes,
+  parseFrontmatter,
+  posixRel,
+  readMarkdown,
+  resolveMarkdownHref,
+  resolveWikiTarget,
+  stripCode,
+  walk,
+} from './lib/akm.mjs';
 
-const ROOT = process.argv[2] ?? process.cwd();
-
-const LAYER_BY_DIR = {
-  '10-sources': 'source',
-  '20-knowledge': 'knowledge',
-  '30-context': 'context',
-  '40-memory': 'operational-memory',
-  '50-procedures': 'procedure',
-  '60-actions': 'action',
-  '70-evaluation': 'evaluation',
-  '80-outputs': 'output',
-};
-
-const TYPES_BY_LAYER = {
-  source: ['source'],
-  knowledge: ['concept', 'entity', 'comparison', 'pattern', 'principle', 'tool', 'technique', 'map'],
-  context: ['context'],
-  'operational-memory': ['memory'],
-  procedure: ['skill', 'workflow', 'checklist', 'playbook'],
-  action: ['run', 'decision', 'handoff'],
-  evaluation: ['failure-pattern', 'recovery-note', 'rubric', 'audit', 'verification'],
-  output: ['output'],
-};
-
-const ENUMS = {
-  trustLevel: ['raw', 'unverified', 'reviewed', 'canonical', 'deprecated'],
-  akmRole: ['raw-source', 'learned-reference', 'reusable-knowledge', 'operating-context', 'executable-procedure', 'verification-rule', 'deliverable'],
-  CMDS: ['Connect', 'Merge', 'Develop', 'Share'],
-  sourceType: ['transcript', 'article', 'paper', 'book', 'meeting', 'tool-doc', 'code', 'agent-output', 'synthesis'],
-  nextAction: ['triage', 'merge', 'contextualize', 'develop-into-skill', 'verify', 'publish', 'archive'],
-};
-
-const REQUIRED = ['description', 'akmLayer', 'akmType', 'trustLevel', 'date created', 'date modified'];
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-
-const SECRET_PATTERNS = [
-  [/sk-[A-Za-z0-9_-]{20,}/, 'OpenAI-style API key'],
-  [/ghp_[A-Za-z0-9]{30,}/, 'GitHub personal token'],
-  [/github_pat_[A-Za-z0-9_]{30,}/, 'GitHub fine-grained token'],
-  [/AKIA[0-9A-Z]{16}/, 'AWS access key'],
-  [/xox[bporas]-[A-Za-z0-9-]{10,}/, 'Slack token'],
-  [/-----BEGIN [A-Z ]*PRIVATE KEY-----/, 'private key block'],
-];
-
+const { mode, root } = parseArgs(process.argv.slice(2));
 const errors = [];
 const warnings = [];
 
-function walk(dir, out = []) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith('.git') || entry.name === 'node_modules') continue;
-    const path = join(dir, entry.name);
-    if (entry.isDirectory()) walk(path, out);
-    else out.push(path);
-  }
-  return out;
-}
-
-function parseFrontmatter(text) {
-  if (!text.startsWith('---\n')) return null;
-  const end = text.indexOf('\n---', 4);
-  if (end === -1) return null;
-  const fields = {};
-  for (const line of text.slice(4, end).split('\n')) {
-    if (!line.trim() || /^\s/.test(line) || line.startsWith('-')) continue;
-    const i = line.indexOf(':');
-    if (i === -1) continue;
-    let value = line.slice(i + 1).trim();
-    if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
-    fields[line.slice(0, i).trim()] = value;
-  }
-  return fields;
-}
-
-const allFiles = walk(ROOT);
-const allMd = allFiles.filter((f) => f.endsWith('.md'));
-const mdBasenames = new Set(allMd.map((f) => f.split('/').pop().replace(/\.md$/, '')));
-
-const rel = (f) => relative(ROOT, f);
-const layerNotes = allMd.filter((f) => {
-  const top = rel(f).split('/')[0];
-  return top in LAYER_BY_DIR || top === '90-archive';
-});
-
-// E1–E8: frontmatter and schema
-for (const file of layerNotes) {
-  const r = rel(file);
-  const top = r.split('/')[0];
-  const text = readFileSync(file, 'utf8');
-  const fm = parseFrontmatter(text);
-
-  if (!fm) { errors.push(`E1 ${r}: frontmatter missing or unparsable`); continue; }
-
-  for (const key of REQUIRED) {
-    if (!fm[key]) errors.push(`E2 ${r}: missing required field "${key}"`);
-  }
-
-  const layer = fm.akmLayer;
-  if (layer && top !== '90-archive' && LAYER_BY_DIR[top] !== layer) {
-    errors.push(`E3 ${r}: akmLayer "${layer}" does not match folder "${top}" (expected "${LAYER_BY_DIR[top]}")`);
-  }
-
-  if (layer && fm.akmType && TYPES_BY_LAYER[layer] && !TYPES_BY_LAYER[layer].includes(fm.akmType)) {
-    errors.push(`E4 ${r}: akmType "${fm.akmType}" not valid for layer "${layer}" (allowed: ${TYPES_BY_LAYER[layer].join(', ')})`);
-  }
-
-  for (const [key, allowed] of Object.entries(ENUMS)) {
-    if (fm[key] && !allowed.includes(fm[key])) {
-      errors.push(`E5 ${r}: ${key} "${fm[key]}" not in [${allowed.join(', ')}]`);
-    }
-  }
-
-  for (const key of ['date created', 'date modified']) {
-    if (fm[key] && !DATE_RE.test(fm[key])) errors.push(`E6 ${r}: ${key} "${fm[key]}" is not YYYY-MM-DD`);
-  }
-
-  if (layer === 'source' && !fm.sourcePath) errors.push(`E7 ${r}: source note without sourcePath`);
-
-  if (top === '90-archive' && fm.trustLevel !== 'deprecated') {
-    errors.push(`E8 ${r}: archived note must have trustLevel: deprecated (got "${fm.trustLevel}")`);
-  }
-}
-
-// W1: wikilink resolution (skip immutable source snapshots and placeholder templates)
-const linkCheckFiles = allMd.filter((f) => {
-  const r = rel(f);
-  return !r.startsWith('10-sources/') && !r.startsWith('00-system/templates/');
-});
-for (const file of linkCheckFiles) {
-  // ignore syntax examples inside fenced blocks and inline code spans
-  const text = readFileSync(file, 'utf8')
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`\n]*`/g, '');
-  for (const match of text.matchAll(/\[\[([^\]\n]+)\]\]/g)) {
-    const target = match[1].split('|')[0].split('#')[0].trim();
-    if (!target) continue;
-    const base = target.split('/').pop();
-    const candidates = [
-      join(ROOT, target), join(ROOT, `${target}.md`),
-      join(dirname(file), target), join(dirname(file), `${target}.md`),
-    ];
-    if (!mdBasenames.has(base) && !candidates.some(existsSync)) {
-      warnings.push(`W1 ${rel(file)}: unresolved wikilink [[${match[1]}]]`);
-    }
-  }
-}
-
-// W2: every layer note listed in INDEX.md / INDEX.local.md
-let indexText = '';
-for (const f of ['00-system/INDEX.md', '00-system/INDEX.local.md']) {
-  const p = join(ROOT, f);
-  if (existsSync(p)) indexText += readFileSync(p, 'utf8');
-}
-for (const file of layerNotes) {
-  const base = file.split('/').pop().replace(/\.md$/, '');
-  if (!indexText.includes(base)) warnings.push(`W2 ${rel(file)}: not listed in INDEX.md / INDEX.local.md`);
-}
-
-// W3: secret patterns
-for (const file of allMd) {
-  const text = readFileSync(file, 'utf8');
-  for (const [pattern, label] of SECRET_PATTERNS) {
-    if (pattern.test(text)) warnings.push(`W3 ${rel(file)}: contains text matching ${label}`);
-  }
+if (mode === 'help') {
+  printHelp();
+  process.exit(0);
+} else if (mode === 'akm') lintAkmRoot(root);
+else if (mode === 'okf-export') lintOkfExport(root);
+else if (mode === 'links') lintLinks(root);
+else if (mode === 'secrets') lintSecrets(root);
+else {
+  printHelp();
+  process.exitCode = 1;
 }
 
 for (const e of errors) console.error(`ERROR   ${e}`);
 for (const w of warnings) console.warn(`warning ${w}`);
-console.log(`\nakm lint: ${layerNotes.length} notes checked — ${errors.length} error(s), ${warnings.length} warning(s)`);
+
+const label = mode === 'okf-export' ? 'okf export lint' : `${mode} lint`;
+console.log(`\n${label}: ${errors.length} error(s), ${warnings.length} warning(s)`);
 if (errors.length > 0) process.exitCode = 1;
+
+function parseArgs(args) {
+  if (args.includes('--help') || args.includes('-h')) return { mode: 'help', root: process.cwd() };
+  if (args.length === 0) return { mode: 'akm', root: process.cwd() };
+
+  const first = args[0];
+  if (!first.startsWith('--')) return { mode: 'akm', root: first };
+
+  const modeByFlag = {
+    '--akm': 'akm',
+    '--okf-export': 'okf-export',
+    '--links': 'links',
+    '--secrets': 'secrets',
+  };
+  const parsedMode = modeByFlag[first];
+  if (!parsedMode) return { mode: 'help', root: process.cwd() };
+  return { mode: parsedMode, root: args[1] && !args[1].startsWith('--') ? args[1] : process.cwd() };
+}
+
+function printHelp() {
+  console.log(`AKM lint
+
+Usage:
+  node scripts/lint.mjs
+  node scripts/lint.mjs --akm [path-to-akm-root]
+  node scripts/lint.mjs --okf-export <path-to-okf-bundle>
+  node scripts/lint.mjs --links [path]
+  node scripts/lint.mjs --secrets [path]`);
+}
+
+function lintAkmRoot(akmRoot) {
+  const notes = layerNotes(akmRoot);
+  const allMd = walk(akmRoot).filter((file) => file.endsWith('.md'));
+
+  lintAkmSchema(akmRoot, notes);
+  lintWikilinks(akmRoot, allMd);
+  lintIndexCoverage(akmRoot, notes);
+  lintDuplicateLayerBasenames(akmRoot, notes);
+  lintSecretsInFiles(akmRoot, allMd);
+
+  const sampleRoot = join(akmRoot, 'examples/minimal-akm');
+  if (existsSync(sampleRoot)) {
+    const sampleNotes = layerNotes(sampleRoot);
+    lintAkmSchema(sampleRoot, sampleNotes, 'sample ');
+    lintWikilinks(sampleRoot, walk(sampleRoot).filter((file) => file.endsWith('.md')), 'sample ');
+    lintIndexCoverage(sampleRoot, sampleNotes, 'sample ');
+  }
+
+  console.log(`akm lint: ${notes.length} root note(s) checked`);
+}
+
+function lintAkmSchema(akmRoot, notes, prefix = '') {
+  for (const file of notes) {
+    const r = posixRel(akmRoot, file);
+    const top = r.split('/')[0];
+    const { text, frontmatter } = readMarkdown(file);
+    if (!frontmatter) {
+      errors.push(`${prefix}E1 ${r}: frontmatter missing or unparsable`);
+      continue;
+    }
+
+    for (const warning of frontmatter.warnings) warnings.push(`${prefix}W0 ${r}: ${warning}`);
+    const fm = frontmatter.fields;
+
+    for (const key of REQUIRED) {
+      if (!fm[key]) errors.push(`${prefix}E2 ${r}: missing required field "${key}"`);
+    }
+
+    const layer = fm.akmLayer;
+    if (layer && top !== '90-archive' && LAYER_BY_DIR[top] !== layer) {
+      errors.push(`${prefix}E3 ${r}: akmLayer "${layer}" does not match folder "${top}" (expected "${LAYER_BY_DIR[top]}")`);
+    }
+
+    if (layer && fm.akmType && TYPES_BY_LAYER[layer] && !TYPES_BY_LAYER[layer].includes(fm.akmType)) {
+      errors.push(`${prefix}E4 ${r}: akmType "${fm.akmType}" not valid for layer "${layer}" (allowed: ${TYPES_BY_LAYER[layer].join(', ')})`);
+    }
+
+    for (const [key, allowed] of Object.entries(ENUMS)) {
+      if (fm[key] && !allowed.includes(fm[key])) {
+        errors.push(`${prefix}E5 ${r}: ${key} "${fm[key]}" not in [${allowed.join(', ')}]`);
+      }
+    }
+
+    for (const key of ['date created', 'date modified']) {
+      if (fm[key] && !DATE_RE.test(String(fm[key]))) errors.push(`${prefix}E6 ${r}: ${key} "${fm[key]}" is not YYYY-MM-DD`);
+    }
+
+    if (layer === 'source' && !fm.sourcePath) errors.push(`${prefix}E7 ${r}: source note without sourcePath`);
+
+    if (top === '90-archive' && fm.trustLevel !== 'deprecated') {
+      errors.push(`${prefix}E8 ${r}: archived note must have trustLevel: deprecated (got "${fm.trustLevel}")`);
+    }
+
+    for (const key of LIST_FIELDS) {
+      if (fm[key] !== undefined && !Array.isArray(fm[key])) {
+        errors.push(`${prefix}E9 ${r}: ${key} must be a YAML list`);
+      }
+    }
+
+    if (!text.endsWith('\n')) warnings.push(`${prefix}W8 ${r}: file should end with a newline`);
+  }
+}
+
+function lintWikilinks(root, allMd, prefix = '') {
+  const index = buildMarkdownIndex(root);
+  for (const file of allMd) {
+    const r = posixRel(root, file);
+    if (r.startsWith('10-sources/') || r.startsWith('00-system/templates/')) continue;
+    const text = stripCode(readFileSync(file, 'utf8'));
+    for (const match of text.matchAll(/\[\[([^\]\n]+)\]\]/g)) {
+      const target = match[1].split('|')[0].trim();
+      if (!target) continue;
+      if (!resolveWikiTarget(root, file, target, index)) {
+        warnings.push(`${prefix}W1 ${r}: unresolved wikilink [[${match[1]}]]`);
+      }
+    }
+  }
+}
+
+function lintIndexCoverage(root, notes, prefix = '') {
+  let indexText = '';
+  for (const f of ['00-system/INDEX.md', '00-system/INDEX.local.md']) {
+    const p = join(root, f);
+    if (existsSync(p)) indexText += readFileSync(p, 'utf8');
+  }
+  if (!indexText) return;
+  for (const file of notes) {
+    const base = basename(file, '.md');
+    if (!indexText.includes(base)) warnings.push(`${prefix}W2 ${posixRel(root, file)}: not listed in INDEX.md / INDEX.local.md`);
+  }
+}
+
+function lintDuplicateLayerBasenames(root, notes) {
+  const byBase = new Map();
+  for (const file of notes) {
+    const base = basename(file, '.md');
+    if (!byBase.has(base)) byBase.set(base, []);
+    byBase.get(base).push(posixRel(root, file));
+  }
+  for (const [base, files] of byBase.entries()) {
+    if (files.length > 1) warnings.push(`W4 duplicate layer basename "${base}": ${files.join(', ')}`);
+  }
+}
+
+function lintSecrets(rootPath) {
+  lintSecretsInFiles(rootPath, walk(rootPath).filter((file) => file.endsWith('.md')));
+}
+
+function lintSecretsInFiles(rootPath, files) {
+  for (const file of files) {
+    const text = readFileSync(file, 'utf8');
+    for (const [pattern, label] of SECRET_PATTERNS) {
+      if (pattern.test(text)) warnings.push(`W3 ${posixRel(rootPath, file)}: contains text matching ${label}`);
+    }
+  }
+}
+
+function lintLinks(rootPath) {
+  const allMd = walk(rootPath).filter((file) => file.endsWith('.md'));
+  lintWikilinks(rootPath, allMd);
+  lintMarkdownLinks(rootPath, allMd);
+}
+
+function lintMarkdownLinks(rootPath, files, prefix = '') {
+  for (const file of files) {
+    const text = readFileSync(file, 'utf8');
+    for (const link of findMarkdownLinks(text)) {
+      if (!resolveMarkdownHref(rootPath, file, link.href)) {
+        warnings.push(`${prefix}W5 ${posixRel(rootPath, file)}: broken Markdown link [${link.label}](${link.href})`);
+      }
+    }
+  }
+}
+
+function lintOkfExport(bundleRoot) {
+  const rootIndex = join(bundleRoot, 'index.md');
+  const allMd = walk(bundleRoot).filter((file) => file.endsWith('.md'));
+  if (!existsSync(rootIndex)) {
+    errors.push('O1 index.md: missing bundle root index.md');
+  } else {
+    const rootFm = parseFrontmatter(readFileSync(rootIndex, 'utf8'));
+    if (!rootFm?.fields.okf_version) errors.push('O2 index.md: missing okf_version frontmatter');
+  }
+
+  const conceptFiles = allMd.filter((file) => {
+    const name = basename(file);
+    return name !== 'index.md' && name !== 'log.md';
+  });
+
+  for (const file of conceptFiles) {
+    const r = posixRel(bundleRoot, file);
+    const fm = parseFrontmatter(readFileSync(file, 'utf8'));
+    if (!fm) {
+      errors.push(`O3 ${r}: frontmatter missing or unparsable`);
+      continue;
+    }
+    if (!fm.fields.type) errors.push(`O4 ${r}: missing required OKF field "type"`);
+    if (!fm.fields.title) warnings.push(`O5 ${r}: optional field "title" missing`);
+    if (!fm.fields.description) warnings.push(`O6 ${r}: optional field "description" missing`);
+    if (fm.fields.tags !== undefined && !Array.isArray(fm.fields.tags)) {
+      warnings.push(`O7 ${r}: tags should be a YAML list`);
+    }
+  }
+
+  lintMarkdownLinks(bundleRoot, allMd, 'OKF ');
+  lintMissingDirectoryIndexes(bundleRoot, conceptFiles);
+}
+
+function lintMissingDirectoryIndexes(bundleRoot, conceptFiles) {
+  const dirs = new Set(conceptFiles.map((file) => dirname(file)));
+  for (const dir of dirs) {
+    if (dir === bundleRoot) continue;
+    if (!existsSync(join(dir, 'index.md'))) {
+      warnings.push(`OKF O8 ${posixRel(bundleRoot, dir)}/: directory has concepts but no index.md`);
+    }
+  }
+}

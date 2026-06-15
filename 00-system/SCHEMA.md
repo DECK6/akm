@@ -93,7 +93,7 @@ Allowed types per layer:
 
 ### nextAction
 
-`triage` | `merge` | `contextualize` | `develop-into-skill` | `verify` | `publish` | `archive`
+`triage` | `classify` | `merge` | `contextualize` | `develop-into-skill` | `verify` | `publish` | `archive`
 
 ## Example frontmatter
 

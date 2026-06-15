@@ -36,3 +36,7 @@ tags: []
 ## Occurrences
 
 - YYYY-MM-DD: (one-line situation)
+
+## Citations
+
+- (Evidence, source note, verification record, or external reference)

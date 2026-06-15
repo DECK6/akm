@@ -38,6 +38,10 @@ tags: []
 
 - [ ] (how to confirm this task succeeded)
 
+## Citations
+
+- (Source for this procedure, tool documentation, or prior verified run)
+
 ## Reporting
 
 (What to report or store, in which format. Deliverables go to 80-outputs)

@@ -37,6 +37,6 @@ tags: []
 - (condition) → A
 - (condition) → B
 
-## Sources
+## Citations
 
 - [[original note]]
