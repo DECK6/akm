@@ -1,6 +1,6 @@
 # AKM — Agent Knowledge Management (한국어 안내)
 
-> 기본 문서는 [README.md](README.md) (영문)입니다. 시스템 파일(00-system, adapters, templates)은 영어가 기본이며, 레이어에 저장하는 노트는 어떤 언어든 무방합니다.
+> 기본 문서는 [README.md](README.md) (영문)입니다. 시스템 파일(99-system, adapters, templates)은 영어가 기본이며, 레이어에 저장하는 노트는 어떤 언어든 무방합니다.
 
 AI 에이전트용 범용 지식 운영 시스템. 순수 마크다운 — DB 없음, 실행 코드 없음. Claude Code, Codex, OpenClaw 및 파일을 읽을 수 있는 모든 에이전트에서 동작합니다.
 
@@ -34,7 +34,7 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 1. 클론 후 `adapters/`에서 사용하는 도구의 어댑터 선택 (Claude Code / Codex / OpenClaw / 커스텀)
 2. 스니펫을 해당 도구의 진입점 파일(CLAUDE.md, AGENTS.md 등)에 붙여넣고 `/path/to/akm`을 실제 경로로 교체
-3. 끝. 에이전트에게 지식 저장·조회를 시키면 `00-system/ROUTER.md`의 분류 트리를 따라 동작합니다
+3. 끝. 에이전트에게 지식 저장·조회를 시키면 `99-system/ROUTER.md`의 분류 트리를 따라 동작합니다
 
 ## 저장 규칙 요약
 
@@ -46,8 +46,8 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 레이어에 저장되는 개인 지식은 gitignore 처리되어 추적되지 않습니다 — 클론 후 사적으로 사용하면서 시스템 업데이트만 pull 받을 수 있습니다.
 
-OKF 호환 export: 내부 AKM schema는 유지하고 외부 공유용 bundle만 OKF 형태로 내보냅니다. `node scripts/export-okf.mjs --out dist/okf` 후 `node scripts/lint.mjs --okf-export dist/okf`로 검사합니다. 세부 규칙은 `00-system/OKF-COMPAT.md`.
+OKF 호환 export: 내부 AKM schema는 유지하고 외부 공유용 bundle만 OKF 형태로 내보냅니다. `node scripts/export-okf.mjs --out dist/okf` 후 `node scripts/lint.mjs --okf-export dist/okf`로 검사합니다. 세부 규칙은 `99-system/OKF-COMPAT.md`.
 
-검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. 보안 규칙은 `00-system/SECURITY.md`.
+검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. 보안 규칙은 `99-system/SECURITY.md`.
 
 라이선스: [MIT](LICENSE)

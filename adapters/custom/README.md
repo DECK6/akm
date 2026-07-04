@@ -9,9 +9,9 @@ Copy this table into your adapter and fill it in:
 | # | Item | Value |
 |---|---|---|
 | ① | AKM root | (absolute path to your clone) |
-| ② | Session start | All of `40-memory/` + `00-system/INDEX.md` |
-| ③ | Routing | `00-system/ROUTER.md` classification tree before every save |
-| ④ | Learn Back | `00-system/LOOP.md` mapping table on failures |
+| ② | Session start | All of `40-memory/` + `99-system/INDEX.md` |
+| ③ | Routing | `99-system/ROUTER.md` classification tree before every save |
+| ④ | Learn Back | `99-system/LOOP.md` mapping table on failures |
 
 ## 2. Put the snippet where your agent reads instructions
 
@@ -22,11 +22,11 @@ System prompt, instruction file, bootstrap note — wherever your agent loads it
 
 Knowledge system root: `/path/to/akm` (AKM)
 
-- When you need knowledge, context, or procedures, first read AKM `00-system/INDEX.md` and all files in `40-memory/` (both are short)
+- When you need knowledge, context, or procedures, first read AKM `99-system/INDEX.md` and all files in `40-memory/` (both are short)
 - Lookup: INDEX → layer folder (`20-knowledge` knowledge, `30-context` context, `50-procedures` procedures)
-- Before saving any knowledge, experience, or procedure, follow the classification tree in `00-system/ROUTER.md`. Never save to arbitrary locations
-- On task failure or repeated mistakes, follow the Learn Back mapping table in `00-system/LOOP.md`: record under `70-evaluation/` and fix the designated layer
-- Never modify originals in `10-sources/`. Update `00-system/INDEX.md` when adding or removing notes, and append one line to `00-system/LOG.md` for meaningful changes
+- Before saving any knowledge, experience, or procedure, follow the classification tree in `99-system/ROUTER.md`. Never save to arbitrary locations
+- On task failure or repeated mistakes, follow the Learn Back mapping table in `99-system/LOOP.md`: record under `70-evaluation/` and fix the designated layer
+- Never modify originals in `10-sources/`. Update `99-system/INDEX.md` when adding or removing notes, and append one line to `99-system/LOG.md` for meaningful changes
 ```
 
 ## 3. If your agent has its own memory or brain

@@ -37,7 +37,7 @@ AKM authors keep using Obsidian wikilinks internally.
 | Internal | OKF-style result |
 |---|---|
 | `[[Agent Knowledge Management]]` | `[Agent Knowledge Management](/20-knowledge/agent-knowledge-management.md)` |
-| `[[ROUTER]]` | `[ROUTER](/00-system/ROUTER.md)` |
+| `[[ROUTER]]` | `[ROUTER](/99-system/ROUTER.md)` |
 | `[[failure-pattern|failure pattern]]` | `[failure pattern](/70-evaluation/failure-patterns/failure-pattern.md)` |
 
 Export resolves by explicit path, filename stem, aliases, and first heading when possible. Unresolved links are still converted to Markdown links and then reported by OKF lint as warnings.

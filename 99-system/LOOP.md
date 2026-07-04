@@ -85,7 +85,7 @@ Accumulating knowledge without steps 5–7 is just a wiki. Repeating step 5 with
 | Followed the procedure, result still wrong | `70-evaluation/failure-patterns/` | Fix the skill in `50-procedures/` (strengthen its verification step) |
 | Knowledge is stale or factually wrong | `70-evaluation/audits/` | Fix the note in `20-knowledge/`, demote trustLevel or deprecate → `90-archive/` |
 | Misunderstood the user's intent or preference | `70-evaluation/failure-patterns/` | Update `30-context/users/` (+ memory pointer if needed every session) |
-| Stored something in the wrong place | `70-evaluation/audits/` | Fix `00-system/ROUTER.md` |
+| Stored something in the wrong place | `70-evaluation/audits/` | Fix `99-system/ROUTER.md` |
 | Reported done without verifying | `70-evaluation/failure-patterns/` | Create a verification rubric for that task in `70-evaluation/rubrics/` |
 | Success worth repeating | (no record needed) | Promote to a procedure in `50-procedures/` |
 

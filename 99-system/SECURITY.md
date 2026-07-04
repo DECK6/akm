@@ -24,7 +24,7 @@ Before ingesting material containing personal data (names, contacts, conversatio
 
 Everything under `10-sources/` … `90-archive/` is your private instance, protected by `.gitignore`.
 
-- **Never `git add -f`** (force-add) a layer file. If a file genuinely belongs in the public system, move it into `00-system/` or `adapters/` deliberately and review it first
+- **Never `git add -f`** (force-add) a layer file. If a file genuinely belongs in the public system, move it into `99-system/` or `adapters/` deliberately and review it first
 - Before any commit: `git diff --cached --name-only` and confirm only system files are staged
 - `sourcePath` values may reveal your private directory structure — fine locally, one more reason instance notes are never committed
 

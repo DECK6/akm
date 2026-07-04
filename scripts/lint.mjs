@@ -159,7 +159,7 @@ function lintWikilinks(root, allMd, prefix = '') {
   const index = buildMarkdownIndex(root);
   for (const file of allMd) {
     const r = posixRel(root, file);
-    if (r.startsWith('10-sources/') || r.startsWith('00-system/templates/')) continue;
+    if (r.startsWith('10-sources/') || r.startsWith('99-system/templates/')) continue;
     const text = stripCode(readFileSync(file, 'utf8'));
     for (const match of text.matchAll(/\[\[([^\]\n]+)\]\]/g)) {
       const target = match[1].split('|')[0].trim();
@@ -173,7 +173,7 @@ function lintWikilinks(root, allMd, prefix = '') {
 
 function lintIndexCoverage(root, notes, prefix = '') {
   let indexText = '';
-  for (const f of ['00-system/INDEX.md', '00-system/INDEX.local.md']) {
+  for (const f of ['99-system/INDEX.md', '99-system/INDEX.local.md']) {
     const p = join(root, f);
     if (existsSync(p)) indexText += readFileSync(p, 'utf8');
   }

@@ -4,7 +4,7 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 
 > Keeping a private instance in a public clone? List your instance notes in `INDEX.local.md` (gitignored) instead of here, and this file stays conflict-free when pulling system updates. If `INDEX.local.md` exists, read it together with this file.
 
-## 00-system
+## 99-system
 
 - [[SCHEMA]] — frontmatter standard, enum values, layer↔folder mapping
 - [[ROUTER]] — security pre-check + classification decision tree + four storage judgment rules

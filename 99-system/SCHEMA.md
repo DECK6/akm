@@ -27,8 +27,8 @@ This file is the single source of truth. Harness-specific extra fields are defin
 | `akmLayer` | enum | See allowed values below |
 | `akmType` | enum | See allowed values below |
 | `trustLevel` | enum | See allowed values below |
-| `date created` | YYYY-MM-DD | Creation date |
-| `date modified` | YYYY-MM-DD | Last modification date |
+| `date created` | ISO 8601 date or datetime | Creation date |
+| `date modified` | ISO 8601 date or datetime | Last modification date |
 
 ### Optional fields
 
@@ -60,7 +60,7 @@ Allowed types per layer:
 | akmLayer | Allowed akmType |
 |---|---|
 | source | `source` |
-| knowledge | `concept`, `entity`, `comparison`, `pattern`, `principle`, `tool`, `technique`, `map` |
+| knowledge | `concept`, `entity`, `comparison`, `pattern`, `principle`, `tool`, `technique`, `guide`, `map` |
 | context | `context` |
 | operational-memory | `memory` |
 | procedure | `skill`, `workflow`, `checklist`, `playbook` |

@@ -1,6 +1,32 @@
 # ── Instance data: your knowledge stays local ──────────────────
-# The repo distributes the system (00-system, adapters, templates).
+# The repo distributes the system (99-system, adapters, templates).
 # Everything stored in the layers below is your private instance.
+
+# Inbox: temporary migration/intake holding area — never tracked.
+00-inbox/**
+!00-inbox/**/
+!00-inbox/**/.gitkeep
+!00-inbox/README.md
+
+# Safety net: build artifacts must never enter the knowledge vault.
+**/node_modules/**
+
+# Safety net: large binary assets live OUTSIDE the vault, in an external
+# assets folder that mirrors the vault's relative paths. The vault stays
+# text-centric; these extensions are blocked so binaries are never committed.
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.aac
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.pdf
+*.pptx
+*.ppt
+*.key
 
 10-sources/**
 !10-sources/**/
@@ -39,11 +65,10 @@
 !90-archive/**/.gitkeep
 
 # ── Maintainer-local files (build plan, personal mappings) ─────
-/00-system/INDEX.local.md
-/PLAN.md
-/00-system/MAPPING-DECK.md
-/00-system/MAPPING-HERMES.md
-/adapters/hermes/
+/99-system/INDEX.local.md
+/99-system/MAPPING-*.md
+/99-system/EXTERNALIZED-LARGE-FILES.md
+/PLAN*.md
 
 # ── Generated exports ─────────────────────────────────────────
 /dist/

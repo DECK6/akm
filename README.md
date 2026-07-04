@@ -50,7 +50,7 @@ The layers define *storage semantics* (what goes where); the stores define *load
                                    (the layer that gets fixed improves the next run)
 ```
 
-Accumulating knowledge without steps 5–7 is just a wiki. Executing without 6–7 is just automation. **Learn Back** — routing every failure to the layer that must change — is what makes it AKM. See [`00-system/LOOP.md`](00-system/LOOP.md).
+Accumulating knowledge without steps 5–7 is just a wiki. Executing without 6–7 is just automation. **Learn Back** — routing every failure to the layer that must change — is what makes it AKM. See [`99-system/LOOP.md`](99-system/LOOP.md).
 
 ## Quick start
 
@@ -68,7 +68,7 @@ To use AKM from anywhere:
    - [OpenClaw](adapters/openclaw/README.md) → paste into your workspace `AGENTS.md`
    - [Any other agent](adapters/custom/README.md) → four questions every adapter must answer
 2. **Replace `/path/to/akm`** in the snippet with your clone location.
-3. **Use it.** Ask your agent to store or find anything. The snippet points it to the routing rules (`00-system/ROUTER.md`) and the loop (`00-system/LOOP.md`); everything else follows.
+3. **Use it.** Ask your agent to store or find anything. The snippet points it to the routing rules (`99-system/ROUTER.md`) and the loop (`99-system/LOOP.md`); everything else follows.
 
 Your notes can be in any language — only the system files are English.
 
@@ -80,7 +80,7 @@ Your notes can be in any language — only the system files are English.
 - **Evaluation (70)** if a failure may repeat, or a quality bar / verification method is needed.
 - **Action (60)**: store only what reproduction, verification, or handoff requires. Everything else, drop.
 
-Full decision tree: [`00-system/ROUTER.md`](00-system/ROUTER.md).
+Full decision tree: [`99-system/ROUTER.md`](99-system/ROUTER.md).
 
 ## OKF export
 
@@ -91,7 +91,7 @@ node scripts/export-okf.mjs --out dist/okf
 node scripts/lint.mjs --okf-export dist/okf
 ```
 
-The export maps `akmType` to OKF `type`, keeps `akmType` internal, converts wikilinks to standard Markdown links, writes root `okf_version: "0.1"` metadata, and generates lowercase `index.md` files for OKF consumers. See [`00-system/OKF-COMPAT.md`](00-system/OKF-COMPAT.md).
+The export maps `akmType` to OKF `type`, keeps `akmType` internal, converts wikilinks to standard Markdown links, writes root `okf_version: "0.1"` metadata, and generates lowercase `index.md` files for OKF consumers. See [`99-system/OKF-COMPAT.md`](99-system/OKF-COMPAT.md).
 
 ## Linting
 
@@ -104,14 +104,16 @@ node scripts/lint.mjs --secrets
 node scripts/lint.mjs --okf-export ./dist/okf
 ```
 
-Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`00-system/SECURITY.md`](00-system/SECURITY.md).
+Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`99-system/SECURITY.md`](99-system/SECURITY.md).
 
 ## Repository structure
 
 ```text
 akm/
 ├── README.md
-├── 00-system/          # SCHEMA (frontmatter standard), ROUTER (classification),
+├── 00-inbox/           # intake staging — new material lands here first,
+│                       # classified out via ROUTER within 7 days
+├── 99-system/          # SCHEMA (frontmatter standard), ROUTER (classification),
 │   │                   # LOOP (operating loop), SECURITY, GLOSSARY, INDEX, LOG
 │   └── templates/      # 11 note templates: concept, entity, comparison, skill,
 │                       # failure-pattern, decision, audit, rubric, verification,
@@ -130,7 +132,7 @@ akm/
 └── scripts/            # lint, OKF export, directory index generation
 ```
 
-The repo distributes the *system* (`00-system/`, `adapters/`, templates). What you store in the layers is *your instance* and is gitignored — clone once, use privately, pull system updates without conflicts.
+The repo distributes the *system* (`99-system/`, `adapters/`, templates). What you store in the layers is *your instance* and is gitignored — clone once, use privately, pull system updates without conflicts.
 
 ## Design principles
 

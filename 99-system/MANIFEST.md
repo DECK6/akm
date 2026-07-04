@@ -10,4 +10,4 @@ Machine-readable compatibility values are intentionally simple so agents can ins
 | `generatedAt` | export-time | Written into OKF bundle root `index.md`. |
 | `sourceRoot` | export-time | Written into OKF bundle root `index.md`. |
 
-The canonical schema remains `00-system/SCHEMA.md`. OKF compatibility rules live in `00-system/OKF-COMPAT.md`.
+The canonical schema remains `99-system/SCHEMA.md`. OKF compatibility rules live in `99-system/OKF-COMPAT.md`.

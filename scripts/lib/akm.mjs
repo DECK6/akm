@@ -16,7 +16,7 @@ export const DEFAULT_EXPORT_DIRS = ['20-knowledge', '30-context', '50-procedures
 
 export const TYPES_BY_LAYER = {
   source: ['source'],
-  knowledge: ['concept', 'entity', 'comparison', 'pattern', 'principle', 'tool', 'technique', 'map'],
+  knowledge: ['concept', 'entity', 'comparison', 'pattern', 'principle', 'tool', 'technique', 'guide', 'map'],
   context: ['context'],
   'operational-memory': ['memory'],
   procedure: ['skill', 'workflow', 'checklist', 'playbook'],
@@ -35,10 +35,10 @@ export const ENUMS = {
 
 export const REQUIRED = ['description', 'akmLayer', 'akmType', 'trustLevel', 'date created', 'date modified'];
 export const LIST_FIELDS = new Set(['aliases', 'tags', 'usedBy']);
-export const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+export const DATE_RE = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
 
 export const SECRET_PATTERNS = [
-  [/sk-[A-Za-z0-9_-]{20,}/, 'OpenAI-style API key'],
+  [/sk-(?:proj-)?[A-Za-z0-9_-]{32,}/, 'OpenAI-style API key'],
   [/ghp_[A-Za-z0-9]{30,}/, 'GitHub personal token'],
   [/github_pat_[A-Za-z0-9_]{30,}/, 'GitHub fine-grained token'],
   [/AKIA[0-9A-Z]{16}/, 'AWS access key'],
@@ -49,7 +49,7 @@ export const SECRET_PATTERNS = [
   [/\b[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\b/, 'JWT-like token'],
 ];
 
-const SKIP_DIRS = new Set(['.git', 'node_modules']);
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'graphify-out']);
 
 export function walk(dir, out = []) {
   if (!existsSync(dir) || !statSync(dir).isDirectory()) return out;

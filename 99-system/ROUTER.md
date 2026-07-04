@@ -7,10 +7,14 @@ Run every intake through this tree from the top. **The first match is the storag
 
 Per [[SECURITY]]: never store secret values (store their names/locations instead); minimize personal data in sources; never force-add layer files to git; review outputs before they leave the machine. An input that fails this check is not stored.
 
+## Intake staging (before classification)
+
+All new intake first lands in `00-inbox/` (see [[00-inbox/README]]). It may stay there **up to 7 days**. Run classification when an item is staged out of inbox — either immediately (preferred) or at the latest when its 7-day stay expires. A weekly inbox triage job sweeps items past 7 days through this tree. Inbox is a landing zone, never a permanent store.
+
 ## Classification decision tree
 
 ```text
-input
+input (from 00-inbox after staging)
 │
 ├─ Q1. Is it an unmodified original from outside? (document, web clip, paper, transcript, log, manual)
 │   └─ YES → 10-sources/ (never modify, record sourcePath, nextAction: merge)
