@@ -26,11 +26,11 @@ export const TYPES_BY_LAYER = {
 };
 
 export const ENUMS = {
-  trustLevel: ['raw', 'unverified', 'reviewed', 'canonical', 'deprecated'],
-  akmRole: ['raw-source', 'learned-reference', 'reusable-knowledge', 'operating-context', 'executable-procedure', 'verification-rule', 'deliverable'],
+  trustLevel: ['draft', 'raw', 'unverified', 'reviewed', 'canonical', 'deprecated'],
+  akmRole: ['raw-source', 'learned-reference', 'reusable-knowledge', 'operating-context', 'executable-procedure', 'verification-rule', 'deliverable', 'execution-log', 'work-log'],
   CMDS: ['Connect', 'Merge', 'Develop', 'Share'],
-  sourceType: ['transcript', 'article', 'paper', 'book', 'meeting', 'tool-doc', 'code', 'agent-output', 'synthesis'],
-  nextAction: ['triage', 'classify', 'merge', 'contextualize', 'develop-into-skill', 'verify', 'publish', 'archive'],
+  sourceType: ['transcript', 'article', 'paper', 'book', 'meeting', 'tool-doc', 'code', 'agent-output', 'synthesis', 'user-instruction', 'cron-run'],
+  nextAction: ['triage', 'classify', 'merge', 'contextualize', 'develop-into-skill', 'verify', 'publish', 'archive', 'enforce'],
 };
 
 export const REQUIRED = ['description', 'akmLayer', 'akmType', 'trustLevel', 'date created', 'date modified'];
@@ -49,7 +49,7 @@ export const SECRET_PATTERNS = [
   [/\b[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\b/, 'JWT-like token'],
 ];
 
-const SKIP_DIRS = new Set(['.git', 'node_modules', 'graphify-out']);
+const SKIP_DIRS = new Set(['.git', '.obsidian', 'dist', 'node_modules', 'graphify-docgraph', 'graphify-out', 'tmp']);
 
 export function walk(dir, out = []) {
   if (!existsSync(dir) || !statSync(dir).isDirectory()) return out;

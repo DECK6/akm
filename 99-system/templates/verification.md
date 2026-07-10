@@ -16,9 +16,13 @@ tags: []
 
 (What was verified — link the note, skill run, or output)
 
+## Tier
+
+(Tier 0 / 1 / 2 / 3 from [[VERIFICATION]], with one-sentence risk rationale)
+
 ## Criteria
 
-(Link the [[rubric]] used, or state ad-hoc criteria — and consider promoting them to a rubric)
+(Apply the seven dimensions in [[VERIFICATION]]. Link any task-specific [[rubric]], and include a Task Evaluation Guidance Packet for Tier 2+)
 
 ## Evidence
 
@@ -26,7 +30,7 @@ tags: []
 
 ## Verdict
 
-- Result: pass / fail / partial
+- Result: PASS / PASS_WITH_NOTE / HOLD / FAIL / NOT_TESTED
 - trustLevel change: (e.g. unverified → reviewed, or none)
 
 ## Learn Back

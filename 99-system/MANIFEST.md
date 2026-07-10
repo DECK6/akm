@@ -4,8 +4,8 @@ Machine-readable compatibility values are intentionally simple so agents can ins
 
 | Field | Value | Meaning |
 |---|---|---|
-| `akmVersion` | `0.1` | AKM core version. |
-| `schemaVersion` | `0.1` | Frontmatter schema version. |
+| `akmVersion` | `0.2` | AKM core version. |
+| `schemaVersion` | `0.2` | Frontmatter schema version. |
 | `okfExportVersion` | `0.1` | OKF export target currently supported by `scripts/export-okf.mjs`. |
 | `generatedAt` | export-time | Written into OKF bundle root `index.md`. |
 | `sourceRoot` | export-time | Written into OKF bundle root `index.md`. |

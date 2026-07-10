@@ -2,7 +2,7 @@
 
 > 기본 문서는 [README.md](README.md) (영문)입니다. 시스템 파일(99-system, adapters, templates)은 영어가 기본이며, 레이어에 저장하는 노트는 어떤 언어든 무방합니다.
 
-AI 에이전트용 범용 지식 운영 시스템. 순수 마크다운 — DB 없음, 실행 코드 없음. Claude Code, Codex, OpenClaw 및 파일을 읽을 수 있는 모든 에이전트에서 동작합니다.
+AI 에이전트용 범용 지식 운영 시스템. 순수 마크다운 — DB나 서버가 필요 없습니다. Claude Code, Codex, OpenClaw 및 파일을 읽을 수 있는 모든 에이전트에서 동작하며, 선택적인 무의존성 스크립트가 lint와 export를 담당합니다.
 
 ## 핵심 개념
 
@@ -30,11 +30,17 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 운영 루프: **Ingest → Classify → Compile → Contextualize → Execute → Verify → Learn Back**. 마지막 Learn Back(실패를 원인 레이어 수정으로 되돌리기)이 없으면 AKM이 아닙니다.
 
+검증은 위험도에 따라 Tier 0(일회성 답변)부터 Tier 3(고위험 claim ledger)까지 적용합니다. DEER 벤치마크에서 가져온 7개 평가 축—요청 충족, 분석 건전성, 구조, 형식, 윤리·안전, 정보 충분성, 정보 무결성—과 Task Evaluation Guidance, claim 검증을 `99-system/VERIFICATION.md`에서 AKM의 Verify/Learn Back 절차로 연결합니다.
+
 ## 빠른 시작
 
 1. 클론 후 `adapters/`에서 사용하는 도구의 어댑터 선택 (Claude Code / Codex / OpenClaw / 커스텀)
 2. 스니펫을 해당 도구의 진입점 파일(CLAUDE.md, AGENTS.md 등)에 붙여넣고 `/path/to/akm`을 실제 경로로 교체
 3. 끝. 에이전트에게 지식 저장·조회를 시키면 `99-system/ROUTER.md`의 분류 트리를 따라 동작합니다
+
+클론 폴더를 Obsidian 볼트로 바로 열어도 됩니다. 로컬 `.obsidian/` 앱 상태는 기본적으로 gitignore 처리됩니다.
+
+기존 Markdown/Obsidian 볼트를 AKM으로 통합할 때는 일괄 복사하지 않습니다. 폴더→레이어 매핑을 먼저 고정하고, 대표 자료 한 묶음을 옮겨 링크·lint·검색 인덱스를 검증한 뒤 통과한 방식만 단계적으로 확장합니다. 상세 절차는 `99-system/MIGRATION.md`를 따릅니다.
 
 ## 저장 규칙 요약
 
@@ -48,6 +54,10 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 OKF 호환 export: 내부 AKM schema는 유지하고 외부 공유용 bundle만 OKF 형태로 내보냅니다. `node scripts/export-okf.mjs --out dist/okf` 후 `node scripts/lint.mjs --okf-export dist/okf`로 검사합니다. 세부 규칙은 `99-system/OKF-COMPAT.md`.
 
-검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. 보안 규칙은 `99-system/SECURITY.md`.
+검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. 관리 노트는 전체 스키마를 따르며, 수정하지 않는 `10-sources/` 원본과 불투명한 `80-outputs/` 산출물은 AKM frontmatter를 생략할 수 있습니다. 단, `akmLayer`·`akmType`·`akmRole` 중 하나라도 쓰면 전체 스키마를 충족해야 합니다.
+
+스크립트 lint는 결정론적 구조 검사이며, 결과가 실제 요청을 충족했는지 또는 출처가 claim을 실제로 지지하는지는 판정하지 않습니다. Tier 1 이상에서는 `99-system/VERIFICATION.md`의 request-fit·claim-support 검증을 별도로 적용합니다.
+
+대용량 오디오·영상·PDF·슬라이드는 텍스트 볼트 밖의 별도 에셋 루트에 두고 AKM 상대경로 구조를 미러링합니다. 상세 규칙은 `99-system/EXTERNAL-ASSETS.md`, 보안 규칙은 `99-system/SECURITY.md`를 따릅니다.
 
 라이선스: [MIT](LICENSE)

@@ -15,6 +15,8 @@ Connects Hermes (multi-profile agent runtime) to an AKM instance.
 
 Hermes loads a per-profile instruction file every session (`SOUL.md` at the main root or under `profiles/<profile>/`). Paste the AKM operating snippet there — operating rules belong in instruction files, never in the brain/memory stores (rules in a memory store is a layer violation).
 
+The instruction file must also point durable, public, and high-stakes completion checks to `99-system/VERIFICATION.md`; profile-specific workers may wrap the standard but must not replace its tier, evidence, verdict, or Learn Back rules.
+
 ## Division of labor with Hermes native features
 
 AKM principle #4: **one body, everywhere else pointers.** Never duplicate content between Hermes native stores and AKM.

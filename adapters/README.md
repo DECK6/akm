@@ -34,6 +34,7 @@ Run a fresh session and verify the agent actually follows the system — install
 
 - [ ] Reads `40-memory/` and `99-system/INDEX.md` before using knowledge
 - [ ] Consults `99-system/ROUTER.md` before storing anything (ask it to store a preference and a procedure; check where they land)
+- [ ] Selects the applicable Tier 0–3 checks in `99-system/VERIFICATION.md` before declaring durable, public, or high-stakes work complete
 - [ ] Consults `99-system/LOOP.md` on failure and records under `70-evaluation/`
 - [ ] Updates `INDEX.md` and appends to `LOG.md` when creating notes — without being asked
 - [ ] Does not duplicate content between its native memory and AKM (one body, pointers elsewhere)

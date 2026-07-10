@@ -31,6 +31,7 @@ Knowledge system root: `/path/to/akm` (local AKM instance). Treat the local path
 - Lookup flow: AKM INDEX -> relevant layer folder: `20-knowledge/` for reusable knowledge, `30-context/` for user/project/domain context, `50-procedures/` for procedures, `70-evaluation/` for rubrics/failure patterns.
 - Before saving durable knowledge, experience, preference, procedure, decision, or failure into AKM, follow `99-system/ROUTER.md`. Do not save to arbitrary locations.
 - Inbox-first rule: new intake normally lands in AKM `00-inbox/` first, then is classified by `99-system/ROUTER.md` before final placement. Exceptions are explicit archival originals in `10-sources/` and selected execution logs in `60-actions/runs/`.
+- Before marking durable, public, or high-stakes work complete, select and apply the Tier 0–3 checks in `99-system/VERIFICATION.md`.
 - On task failure, repeated mistakes, or missing verification criteria, follow `99-system/LOOP.md` Learn Back: record the finding under `70-evaluation/`, then fix the responsible layer.
 - Never modify originals in AKM `10-sources/`. Update the INDEX when adding/removing notes and append one line to `99-system/LOG.md` for meaningful changes.
 - Follow AKM `99-system/SECURITY.md` before storage: never store secret values; store only secret names/locations when needed.
@@ -56,4 +57,5 @@ Do not bulk-copy AKM notes into Aside memory. If another harness would need the 
 - Ask Aside where recurring mistakes should be recorded: it should answer `70-evaluation/failure-patterns/` plus a `40-memory/` pointer if session-critical.
 - Ask Aside where a durable user/project-specific constraint belongs: it should answer `30-context/` plus a short memory pointer only if needed at session start.
 - Ask Aside where a repeatable procedure with failure points and verification belongs: it should answer `50-procedures/` and use AKM templates/routing.
+- Give Aside a durable report with an unsupported high-impact claim: it should use `VERIFICATION.md`, avoid claiming completion, and route the finding to evaluation/Learn Back.
 - Confirm Aside does not copy long AKM note bodies into native memory.

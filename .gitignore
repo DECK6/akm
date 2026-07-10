@@ -11,9 +11,8 @@
 # Safety net: build artifacts must never enter the knowledge vault.
 **/node_modules/**
 
-# Safety net: large binary assets live OUTSIDE the vault, in an external
-# assets folder that mirrors the vault's relative paths. The vault stays
-# text-centric; these extensions are blocked so binaries are never committed.
+# Safety net: large binary assets live OUTSIDE the vault. See
+# 99-system/EXTERNAL-ASSETS.md for the mirrored-path convention.
 *.wav
 *.mp3
 *.flac
@@ -72,6 +71,13 @@
 
 # ── Generated exports ─────────────────────────────────────────
 /dist/
+/graphify-docgraph/
+/graphify-out/
+/scripts/graphify-out/
+/tmp/
+
+# ── Local Obsidian app state ──────────────────────────────────
+/.obsidian/
 
 # ── OS noise ───────────────────────────────────────────────────
 .DS_Store

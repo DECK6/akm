@@ -1,6 +1,6 @@
 # AKM-SCHEMA
 
-The frontmatter standard and storage rules every Markdown note in the AKM core follows.
+The frontmatter standard and storage rules for Markdown notes managed by the AKM core.
 This file is the single source of truth. Harness-specific extra fields are defined in each adapter and must not conflict with the fields defined here.
 
 ## Layer ↔ folder mapping
@@ -18,6 +18,8 @@ This file is the single source of truth. Harness-specific extra fields are defin
 | (none) | `90-archive/` | End-of-life notes — keep original frontmatter, set `trustLevel: deprecated` |
 
 ## Frontmatter standard
+
+Managed notes in `20-knowledge/` through `70-evaluation/`, plus `90-archive/`, use the full schema below. `10-sources/` and `80-outputs/` may also contain opaque Markdown originals or deliverables that must remain unchanged; those files may omit AKM frontmatter. Once a source/output file opts into any `akmLayer`, `akmType`, or `akmRole` field, it must satisfy the complete schema. When an original cannot be modified, keep its metadata in a companion note or directory index.
 
 ### Required fields
 
@@ -51,7 +53,7 @@ This file is the single source of truth. Harness-specific extra fields are defin
 
 ### akmRole
 
-`raw-source` | `learned-reference` | `reusable-knowledge` | `operating-context` | `executable-procedure` | `verification-rule` | `deliverable`
+`raw-source` | `learned-reference` | `reusable-knowledge` | `operating-context` | `executable-procedure` | `verification-rule` | `deliverable` | `execution-log` | `work-log`
 
 ### akmType
 
@@ -79,12 +81,13 @@ Allowed types per layer:
 
 ### sourceType
 
-`transcript` | `article` | `paper` | `book` | `meeting` | `tool-doc` | `code` | `agent-output` | `synthesis`
+`transcript` | `article` | `paper` | `book` | `meeting` | `tool-doc` | `code` | `agent-output` | `synthesis` | `user-instruction` | `cron-run`
 
 ### trustLevel
 
-`raw` | `unverified` | `reviewed` | `canonical` | `deprecated`
+`draft` | `raw` | `unverified` | `reviewed` | `canonical` | `deprecated`
 
+- draft: generated or working content that has not been reviewed yet
 - raw: original as-is, no interpretation
 - unverified: synthesized but not yet verified
 - reviewed: passed human or procedural verification
@@ -93,7 +96,7 @@ Allowed types per layer:
 
 ### nextAction
 
-`triage` | `classify` | `merge` | `contextualize` | `develop-into-skill` | `verify` | `publish` | `archive`
+`triage` | `classify` | `merge` | `contextualize` | `develop-into-skill` | `verify` | `publish` | `archive` | `enforce`
 
 ## Example frontmatter
 
@@ -153,6 +156,7 @@ date modified: 2026-06-12
 
 - Filenames: kebab-case English. Example: `akm-seven-layer-architecture.md`
 - Originals (`10-sources/`) use `YYYY-MM-DD-<original-name>.md` and are never modified after ingest. Interpretation and summary happen in `20-knowledge/`
+- Opaque source/output Markdown may omit AKM frontmatter. If it uses any AKM schema field, the full required schema applies
 - `40-memory/` uses **cumulative files per topic** (e.g. `user-preferences.md`). 1–3 lines per item plus a wikilink to the full note. The whole folder is loaded every session, so do not fragment it into many small files. Memory notes omit `akmRole`
 - `30-context/users/` filenames are the user's handle or account name in kebab-case (e.g. `alice.md`)
 - One file = one topic. Split files that mix topics

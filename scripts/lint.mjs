@@ -107,14 +107,20 @@ function lintAkmSchema(akmRoot, notes, prefix = '') {
   for (const file of notes) {
     const r = posixRel(akmRoot, file);
     const top = r.split('/')[0];
+    const strictSchema = requiresAkmSchema(r);
     const { text, frontmatter } = readMarkdown(file);
     if (!frontmatter) {
-      errors.push(`${prefix}E1 ${r}: frontmatter missing or unparsable`);
+      if (strictSchema) errors.push(`${prefix}E1 ${r}: frontmatter missing or unparsable`);
+      if (!text.endsWith('\n')) warnings.push(`${prefix}W8 ${r}: file should end with a newline`);
       continue;
     }
 
     for (const warning of frontmatter.warnings) warnings.push(`${prefix}W0 ${r}: ${warning}`);
     const fm = frontmatter.fields;
+    if (!strictSchema && !hasAkmSchemaFields(fm)) {
+      if (!text.endsWith('\n')) warnings.push(`${prefix}W8 ${r}: file should end with a newline`);
+      continue;
+    }
 
     for (const key of REQUIRED) {
       if (!fm[key]) errors.push(`${prefix}E2 ${r}: missing required field "${key}"`);
@@ -155,6 +161,15 @@ function lintAkmSchema(akmRoot, notes, prefix = '') {
   }
 }
 
+function requiresAkmSchema(relPath) {
+  const top = relPath.split('/')[0];
+  return top !== '10-sources' && top !== '80-outputs';
+}
+
+function hasAkmSchemaFields(fields) {
+  return fields.akmLayer !== undefined || fields.akmType !== undefined || fields.akmRole !== undefined;
+}
+
 function lintWikilinks(root, allMd, prefix = '') {
   const index = buildMarkdownIndex(root);
   for (const file of allMd) {
@@ -179,21 +194,38 @@ function lintIndexCoverage(root, notes, prefix = '') {
   }
   if (!indexText) return;
   for (const file of notes) {
-    const base = basename(file, '.md');
-    if (!indexText.includes(base)) warnings.push(`${prefix}W2 ${posixRel(root, file)}: not listed in INDEX.md / INDEX.local.md`);
+    if (!isCoveredByIndex(root, file, indexText)) {
+      warnings.push(`${prefix}W2 ${posixRel(root, file)}: not listed in INDEX.md / INDEX.local.md`);
+    }
   }
 }
 
 function lintDuplicateLayerBasenames(root, notes) {
   const byBase = new Map();
   for (const file of notes) {
+    const rel = posixRel(root, file);
+    if (rel.includes('/_archive/')) continue;
     const base = basename(file, '.md');
     if (!byBase.has(base)) byBase.set(base, []);
-    byBase.get(base).push(posixRel(root, file));
+    byBase.get(base).push(rel);
   }
   for (const [base, files] of byBase.entries()) {
     if (files.length > 1) warnings.push(`W4 duplicate layer basename "${base}": ${files.join(', ')}`);
   }
+}
+
+function isCoveredByIndex(root, file, indexText) {
+  const rel = posixRel(root, file);
+  const base = basename(file, '.md');
+  if (indexText.includes(rel) || indexText.includes(base)) return true;
+
+  const parts = dirname(rel).split('/').filter(Boolean);
+  while (parts.length > 0) {
+    const dir = `${parts.join('/')}/`;
+    if (indexText.includes(dir)) return true;
+    parts.pop();
+  }
+  return false;
 }
 
 function lintSecrets(rootPath) {
@@ -210,9 +242,17 @@ function lintSecretsInFiles(rootPath, files) {
 }
 
 function lintLinks(rootPath) {
-  const allMd = walk(rootPath).filter((file) => file.endsWith('.md'));
+  const allMd = walk(rootPath).filter((file) => {
+    if (!file.endsWith('.md')) return false;
+    return !isNestedOkfExample(rootPath, file);
+  });
   lintWikilinks(rootPath, allMd);
   lintMarkdownLinks(rootPath, allMd);
+}
+
+function isNestedOkfExample(rootPath, file) {
+  const rel = posixRel(rootPath, file);
+  return rel.startsWith('examples/okf-export/') || rel.includes('/examples/okf-export/');
 }
 
 function lintMarkdownLinks(rootPath, files, prefix = '') {

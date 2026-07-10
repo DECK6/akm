@@ -1,6 +1,7 @@
 ---
 description: "One-sentence English retrieval hint: which execution this records and why it is worth keeping."
 akmLayer: action
+akmRole: execution-log
 akmType: run
 trustLevel: reviewed
 nextAction: archive

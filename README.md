@@ -1,6 +1,6 @@
 # AKM — Agent Knowledge Management
 
-A universal, tool-agnostic knowledge system for AI agents. Plain Markdown, no database, no code to run. Works with **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files.
+A universal, tool-agnostic knowledge system for AI agents. Plain Markdown, no database or server required. Works with **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files; optional zero-dependency scripts provide linting and export.
 
 > An LLM wiki gives an agent a *map* of knowledge. AKM gives it an *operating system* for knowledge: what to learn, where to store it, how to act on it, how to verify results, and where failures go so the next run is better.
 
@@ -52,6 +52,8 @@ The layers define *storage semantics* (what goes where); the stores define *load
 
 Accumulating knowledge without steps 5–7 is just a wiki. Executing without 6–7 is just automation. **Learn Back** — routing every failure to the layer that must change — is what makes it AKM. See [`99-system/LOOP.md`](99-system/LOOP.md).
 
+Verification is risk-based: Tier 0 for low-risk one-offs, Tier 1 for durable notes, Tier 2 for deep reports, and Tier 3 for high-stakes work with a claim ledger. The seven-dimension standard is informed by the DEER benchmark and connects request fit, reasoning, structure, style, safety, evidence sufficiency, and evidence integrity to Learn Back. See [`99-system/VERIFICATION.md`](99-system/VERIFICATION.md).
+
 ## Quick start
 
 ```bash
@@ -66,11 +68,17 @@ To use AKM from anywhere:
    - [Claude Code](adapters/claude-code/README.md) → paste the snippet into `~/.claude/CLAUDE.md` or a project `CLAUDE.md`
    - [Codex](adapters/codex/README.md) → paste into `~/.codex/AGENTS.md` or a repo `AGENTS.md`
    - [OpenClaw](adapters/openclaw/README.md) → paste into your workspace `AGENTS.md`
+   - [Hermes](adapters/hermes/README.md) → paste into each profile's session-loaded instruction file
+   - [Aside](adapters/aside/README.md) → connect Aside instructions and native-memory pointers
    - [Any other agent](adapters/custom/README.md) → four questions every adapter must answer
 2. **Replace `/path/to/akm`** in the snippet with your clone location.
 3. **Use it.** Ask your agent to store or find anything. The snippet points it to the routing rules (`99-system/ROUTER.md`) and the loop (`99-system/LOOP.md`); everything else follows.
 
 Your notes can be in any language — only the system files are English.
+
+AKM can also be opened directly as an Obsidian vault. Local `.obsidian/` application state is ignored by default, so the same folder remains a portable Markdown knowledge system.
+
+If you already have a Markdown or Obsidian vault, migrate it in bounded phases instead of copying everything at once: freeze the folder-to-layer mapping, move one representative slice, repair links, lint and reindex, then expand only after the slice passes. See [`99-system/MIGRATION.md`](99-system/MIGRATION.md).
 
 ## Storage rules in 30 seconds
 
@@ -104,7 +112,15 @@ node scripts/lint.mjs --secrets
 node scripts/lint.mjs --okf-export ./dist/okf
 ```
 
-Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`99-system/SECURITY.md`](99-system/SECURITY.md).
+Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Managed AKM notes use the complete schema. Unmodified Markdown originals in `10-sources/` and opaque deliverables in `80-outputs/` may omit AKM frontmatter; if either uses an `akmLayer`, `akmType`, or `akmRole` field, the full schema applies. See [`99-system/SCHEMA.md`](99-system/SCHEMA.md).
+
+The script checks deterministic structure; it cannot decide whether an artifact answered the request or whether a cited source truly supports a claim. Tier 1+ verification adds those request-fit and claim-support checks through [`99-system/VERIFICATION.md`](99-system/VERIFICATION.md).
+
+Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`99-system/SECURITY.md`](99-system/SECURITY.md).
+
+## Large assets
+
+Keep large binaries outside the text vault and mirror their AKM-relative paths under a separate asset root. Store paths, provenance, checksums, and verification notes in Markdown; do not force-add ignored binaries. See [`99-system/EXTERNAL-ASSETS.md`](99-system/EXTERNAL-ASSETS.md).
 
 ## Repository structure
 
@@ -114,10 +130,10 @@ akm/
 ├── 00-inbox/           # intake staging — new material lands here first,
 │                       # classified out via ROUTER within 7 days
 ├── 99-system/          # SCHEMA (frontmatter standard), ROUTER (classification),
-│   │                   # LOOP (operating loop), SECURITY, GLOSSARY, INDEX, LOG
-│   └── templates/      # 11 note templates: concept, entity, comparison, skill,
+│   │                   # LOOP, VERIFICATION, SECURITY, EXTERNAL-ASSETS, INDEX, LOG
+│   └── templates/      # 12 note templates: concept, entity, comparison, skill,
 │                       # failure-pattern, decision, audit, rubric, verification,
-│                       # run, handoff
+│                       # claim-ledger, run, handoff
 ├── 10-sources/         ┐
 ├── 20-knowledge/       │
 ├── 30-context/         │
