@@ -1,0 +1,29 @@
+{
+  "contractVersion": "1.0.0",
+  "taskId": "t_7a254985",
+  "purpose": "Complete the requested canonical manuscript.",
+  "inputs": [
+    {"path": "<source path>", "required": true, "verify": "exists"}
+  ],
+  "outputs": [],
+  "canonicalPath": "<missing>",
+  "format": [],
+  "sources": [],
+  "owner": {"primary": "operator", "handoff": "TBD"},
+  "failureHandling": {
+    "blockedWhen": ["PATCH_NEEDED"],
+    "holdWhen": [],
+    "preserve": []
+  },
+  "completion": {
+    "required": ["read-only audit completed"],
+    "optional": []
+  },
+  "verification": [
+    {"command": "node audit.mjs", "expectedExit": "zero", "readback": "none"}
+  ],
+  "runtime": {"maxSeconds": 0, "goalMode": true},
+  "nonGoals": [],
+  "securityExclusions": ["secret"],
+  "blockers": ["internal PATCH_NEEDED"]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "roots": {"fixture": "."},
+  "assets": [
+    {
+      "assetId": "fixture-agents",
+      "root": "fixture",
+      "path": "instructions/AGENTS.md",
+      "kind": "AGENTS",
+      "owner": "maintainer",
+      "scope": "project",
+      "canonicalSource": "fixture:instructions/AGENTS.md",
+      "version": "1.0.0",
+      "state": "active",
+      "lastReviewedAt": "2026-07-19",
+      "lifecycle": {"vcs": "git", "changelog": "fixture:CHANGELOG.md", "restoreMethod": "git checkout", "restoreEvidence": "fixture:test"}
+    },
+    {
+      "assetId": "fixture-claude",
+      "root": "fixture",
+      "path": "instructions/CLAUDE.md",
+      "kind": "CLAUDE",
+      "owner": "maintainer",
+      "scope": "project",
+      "canonicalSource": "fixture:instructions/CLAUDE.md",
+      "version": "1.0.0",
+      "state": "active",
+      "lastReviewedAt": "2026-07-19",
+      "lifecycle": {"vcs": "git", "changelog": "fixture:CHANGELOG.md", "restoreMethod": "git checkout", "restoreEvidence": "fixture:test"}
+    },
+    {
+      "assetId": "fixture-soul",
+      "root": "fixture",
+      "path": "instructions/SOUL.md",
+      "kind": "SOUL",
+      "owner": "operator",
+      "scope": "profile",
+      "canonicalSource": "fixture:instructions/SOUL.md",
+      "version": "1.0.0",
+      "state": "active",
+      "lastReviewedAt": "2026-07-19",
+      "lifecycle": {"vcs": "git", "changelog": "fixture:CHANGELOG.md", "restoreMethod": "git checkout", "restoreEvidence": "fixture:test"}
+    },
+    {
+      "assetId": "fixture-skill",
+      "root": "fixture",
+      "path": "instructions/SKILL.md",
+      "kind": "skill",
+      "owner": "operator",
+      "scope": "skill",
+      "canonicalSource": "fixture:instructions/SKILL.md",
+      "version": "1.0.0",
+      "state": "active",
+      "lastReviewedAt": "2026-07-19",
+      "lifecycle": {"vcs": "git", "changelog": "fixture:CHANGELOG.md", "restoreMethod": "git checkout", "restoreEvidence": "fixture:test"}
+    }
+  ]
+}

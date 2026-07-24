@@ -1,6 +1,6 @@
 # AKM — Agent Knowledge Management
 
-A universal, tool-agnostic knowledge system for AI agents. Plain Markdown, no database or server required. Works with **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files; optional zero-dependency scripts provide linting and export.
+A universal, tool-agnostic knowledge system for AI agents. Plain Markdown, no database or server required. Works with **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files; optional zero-dependency scripts provide linting, operational enforcement, and export.
 
 > An LLM wiki gives an agent a *map* of knowledge. AKM gives it an *operating system* for knowledge: what to learn, where to store it, how to act on it, how to verify results, and where failures go so the next run is better.
 
@@ -110,6 +110,10 @@ node scripts/lint.mjs --akm
 node scripts/lint.mjs --links
 node scripts/lint.mjs --secrets
 node scripts/lint.mjs --okf-export ./dist/okf
+node scripts/lint.mjs --task-contract ./path/to/contract.md
+node scripts/lint.mjs --instructions ./path/to/instruction-manifest.json
+node scripts/lint.mjs --routing-failure ./path/to/failure-note.md
+node scripts/lint.mjs --prompt-assets ./path/to/prompt-asset-manifest.json
 ```
 
 Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Managed AKM notes use the complete schema. Unmodified Markdown originals in `10-sources/` and opaque deliverables in `80-outputs/` may omit AKM frontmatter; if either uses an `akmLayer`, `akmType`, or `akmRole` field, the full schema applies. See [`99-system/SCHEMA.md`](99-system/SCHEMA.md).
@@ -117,6 +121,15 @@ Schema violations and OKF conformance failures are errors (exit 1); link/index/s
 The script checks deterministic structure; it cannot decide whether an artifact answered the request or whether a cited source truly supports a claim. Tier 1+ verification adds those request-fit and claim-support checks through [`99-system/VERIFICATION.md`](99-system/VERIFICATION.md).
 
 Security and privacy rules — never store secret values, layers never leave the machine, review outputs before sharing — live in [`99-system/SECURITY.md`](99-system/SECURITY.md).
+
+## Evidence and bounded execution
+
+AKM v0.3 adds two portable contracts learned from a production instance without making its local policies part of the public core:
+
+- [`99-system/EVIDENCE-SCHEMA.md`](99-system/EVIDENCE-SCHEMA.md) separates retrieved candidates, direct reads, named claim support, conflicts, and reproducible evidence packets. Derived indexes remain disposable; Markdown and original sources remain canonical.
+- [`99-system/TASK-CONTRACT-SCHEMA.md`](99-system/TASK-CONTRACT-SCHEMA.md) defines bounded artifact work with exact outputs, one canonical path, explicit ownership, failure handling, verification readback, security exclusions, and a 90-minute maximum runtime.
+
+The four enforcement modes are read-only and fail closed. They validate declared structure; they do not create work, authorize external actions, or replace Tier 0–3 verification. See [`99-system/ENFORCEMENT.md`](99-system/ENFORCEMENT.md).
 
 ## Large assets
 
@@ -130,10 +143,9 @@ akm/
 ├── 00-inbox/           # intake staging — new material lands here first,
 │                       # classified out via ROUTER within 7 days
 ├── 99-system/          # SCHEMA (frontmatter standard), ROUTER (classification),
-│   │                   # LOOP, VERIFICATION, SECURITY, EXTERNAL-ASSETS, INDEX, LOG
-│   └── templates/      # 12 note templates: concept, entity, comparison, skill,
-│                       # failure-pattern, decision, audit, rubric, verification,
-│                       # claim-ledger, run, handoff
+│   │                   # LOOP, VERIFICATION, EVIDENCE, TASK CONTRACT, SECURITY,
+│   │                   # ENFORCEMENT, EXTERNAL-ASSETS, INDEX, LOG
+│   └── templates/      # 12 note templates + task contract + retrieval manifest
 ├── 10-sources/         ┐
 ├── 20-knowledge/       │
 ├── 30-context/         │
@@ -145,7 +157,7 @@ akm/
 ├── 90-archive/         ┘
 ├── adapters/           # thin entry points per harness
 ├── examples/           # minimal fixture + OKF export sample
-└── scripts/            # lint, OKF export, directory index generation
+└── scripts/            # lint/enforcement, OKF export, directory index generation
 ```
 
 The repo distributes the *system* (`99-system/`, `adapters/`, templates). What you store in the layers is *your instance* and is gitignored — clone once, use privately, pull system updates without conflicts.
@@ -156,7 +168,7 @@ The repo distributes the *system* (`99-system/`, `adapters/`, templates). What y
 2. **Separated stores, reconnected by links.** Memory holds pointers, not knowledge. Skills hold procedures, not domain knowledge. Actions are stored selectively.
 3. **Evaluation is not optional.** A failure is not an error to delete; it's a signal that must be routed back to the layer that caused it.
 4. **One body, everywhere else pointers.** Native agent memories (Claude Code auto-memory, OpenClaw `MEMORY.md`, a custom agent's brain) keep harness-specific pointers; shared rules live in AKM. Never duplicate content across stores.
-5. **No over-engineering.** Markdown + folders + frontmatter. Add code or databases only when file counts demand it.
+5. **No over-engineering.** Markdown + folders + frontmatter remain canonical. Optional validators may check declared contracts, but they never become the knowledge store.
 6. **Generic structure, domain-specific taxonomy.** The layers never change per domain; domains extend inside the Knowledge and Context layers.
 
 ## Lineage

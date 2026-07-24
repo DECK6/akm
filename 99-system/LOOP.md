@@ -85,6 +85,7 @@ Accumulating knowledge without steps 5–7 is just a wiki. Repeating step 5 with
 | Followed the procedure, result still wrong | `70-evaluation/failure-patterns/` | Fix the skill in `50-procedures/` (strengthen its verification step) |
 | Knowledge is stale or factually wrong | `70-evaluation/audits/` | Fix the note in `20-knowledge/`, demote trustLevel or deprecate → `90-archive/` |
 | Misunderstood the user's intent or preference | `70-evaluation/failure-patterns/` | Update `30-context/users/` (+ memory pointer if needed every session) |
+| Wrong worker, tool, profile, or skill route | `70-evaluation/failure-patterns/` using the routing handoff block | Fix the owning router, procedure, or skill description; validate the event with `node scripts/lint.mjs --routing-failure <note>` |
 | Stored something in the wrong place | `70-evaluation/audits/` | Fix `99-system/ROUTER.md` |
 | Reported done without verifying | `70-evaluation/failure-patterns/` | Create a verification rubric for that task in `70-evaluation/rubrics/` |
 | Important claim is unsupported or its source is inaccessible | `70-evaluation/verification/` or claim ledger | Fix the target note, source coverage, or retrieval procedure before reporting done |

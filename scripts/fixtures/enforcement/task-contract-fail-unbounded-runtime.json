@@ -1,0 +1,33 @@
+{
+  "contractVersion": "1.0.0",
+  "taskId": "t_fixture_unbounded_runtime",
+  "purpose": "Demonstrate that a bounded AKM task cannot silently enter an open-ended goal loop.",
+  "inputs": [
+    {"path": "AGENTS.md", "required": true, "verify": "exists"}
+  ],
+  "outputs": [
+    {"path": "/tmp/akm-task-contract-unbounded-report.json", "kind": "report", "required": true}
+  ],
+  "canonicalPath": "/tmp/akm-task-contract-unbounded-report.json",
+  "format": ["UTF-8 JSON"],
+  "sources": [
+    {"ref": "99-system/TASK-CONTRACT-SCHEMA.md", "role": "source-of-truth"}
+  ],
+  "owner": {"primary": "operator", "handoff": "after focused verification passes"},
+  "failureHandling": {
+    "blockedWhen": ["an external runtime dependency is unavailable"],
+    "holdWhen": ["an internal verification gate is unmet"],
+    "preserve": ["task log and terminal-state evidence"]
+  },
+  "completion": {
+    "required": ["required report exists and reads back"],
+    "optional": ["cosmetic wording"]
+  },
+  "verification": [
+    {"command": "test -f /tmp/akm-task-contract-unbounded-report.json", "expectedExit": 0, "readback": "/tmp/akm-task-contract-unbounded-report.json"}
+  ],
+  "runtime": {"maxSeconds": 7200, "goalMode": true},
+  "nonGoals": ["open-ended research", "optional polish after acceptance"],
+  "securityExclusions": ["auth", "token", "cookie", "session-db", "secret"],
+  "blockers": []
+}

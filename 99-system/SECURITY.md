@@ -12,6 +12,13 @@ Store **secret names and locations** instead:
 
 `scripts/lint.mjs` scans for common secret patterns (W3), but the scan is a backstop, not permission to be careless.
 
+### Prompt/config asset snapshots
+
+- Inventory only explicitly allowlisted `.md`, `.txt`, `.json`, `.yaml`, or `.yml` files under a named root alias.
+- Reject machine-absolute or escaping paths and any auth, OAuth, token, cookie, session, or log path; reject `.env`, database, SQLite, and log files before reading them.
+- Require an owner, single source of truth, version/state, VCS boundary, changelog reference, restore method, and restore evidence for every asset.
+- Run `node scripts/lint.mjs --prompt-assets <manifest>`; never use a home-directory snapshot or a secret/session/log allowlist exception.
+
 ## 2. Personal data in sources
 
 Before ingesting material containing personal data (names, contacts, conversations, third-party content):

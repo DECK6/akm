@@ -97,6 +97,17 @@ input (from 00-inbox after staging)
 - **Knowledge vs context**: "Is it true for anyone?" YES → `20-knowledge/`. "True only for this user/project?" → `30-context/`
 - **Knowledge vs procedure**: "what to know" → `20-knowledge/`. "how to execute" → `50-procedures/`
 
+## Operational-surface routing gate
+
+Before writing an operational surface, route detail to the lowest-frequency canonical layer that can preserve it.
+
+- `INDEX.md` and `INDEX.local.md` receive one routing pointer, never a mini-abstract.
+- `LOG.md` receives one outcome and canonical link, never duplicated readback evidence.
+- Project/state and hot-cache files keep current state plus at most three recent runs or events.
+- Source lists, metrics, test output, and rollback evidence go to the canonical note, `60-actions/`, `70-evaluation/`, or an external manifest.
+- Task contracts and evidence packets contain only fields required for execution, audit, or verification.
+- Do not add a section unless it changes a decision, retrieval, execution, verification, recovery, or future reuse.
+
 ## Classification examples (for verification)
 
 | Input | Path through the tree | Stored at |

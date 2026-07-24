@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "assets": [
+    {
+      "id": "project-agents",
+      "path": "instructions/AGENTS.md",
+      "type": "AGENTS",
+      "owner": "maintainer",
+      "scope": {"kind": "project", "target": "akm"},
+      "appliesWhen": "working inside AKM",
+      "precedenceRank": 30,
+      "overrides": ["project-claude"],
+      "mustNotOverride": [],
+      "conflictKey": "package-manager",
+      "directive": {"effect": "require", "value": "bun"}
+    },
+    {
+      "id": "project-claude",
+      "path": "instructions/CLAUDE.md",
+      "type": "CLAUDE",
+      "owner": "maintainer",
+      "scope": {"kind": "project", "target": "akm"},
+      "appliesWhen": "working inside AKM",
+      "precedenceRank": 30,
+      "overrides": ["project-agents"],
+      "mustNotOverride": [],
+      "conflictKey": "package-manager",
+      "directive": {"effect": "require", "value": "npm"}
+    }
+  ]
+}

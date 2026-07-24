@@ -7,9 +7,13 @@
 //   node scripts/lint.mjs --okf-export <path-to-okf-bundle>
 //   node scripts/lint.mjs --links [path]
 //   node scripts/lint.mjs --secrets [path]
+//   node scripts/lint.mjs --instructions <manifest.json|md>
+//   node scripts/lint.mjs --task-contract <contract.json|md>
+//   node scripts/lint.mjs --routing-failure <ledger.json|jsonl|md>
+//   node scripts/lint.mjs --prompt-assets <manifest.json|md>
 
 import { existsSync, readFileSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import {
   DATE_RE,
   ENUMS,
@@ -29,6 +33,11 @@ import {
   stripCode,
   walk,
 } from './lib/akm.mjs';
+import { auditInstructionPrecedence } from './lib/enforcement/prompt-audit.mjs';
+import { buildPromptManifest } from './lib/enforcement/prompt-manifest.mjs';
+import { validateRouteLedger } from './lib/enforcement/route-ledger.mjs';
+import { validateTaskContract } from './lib/enforcement/task-contract.mjs';
+import { readStructuredFile } from './lib/enforcement/io.mjs';
 
 const { mode, root } = parseArgs(process.argv.slice(2));
 const errors = [];
@@ -41,6 +50,10 @@ if (mode === 'help') {
 else if (mode === 'okf-export') lintOkfExport(root);
 else if (mode === 'links') lintLinks(root);
 else if (mode === 'secrets') lintSecrets(root);
+else if (mode === 'instructions') lintStructuredInput(root, 'instructions', auditInstructionPrecedence);
+else if (mode === 'task-contract') lintStructuredInput(root, 'task-contract', validateTaskContract);
+else if (mode === 'routing-failure') lintStructuredInput(root, 'routing-failure', validateRouteLedger);
+else if (mode === 'prompt-assets') lintStructuredInput(root, 'prompt-assets', buildPromptManifest);
 else {
   printHelp();
   process.exitCode = 1;
@@ -65,9 +78,13 @@ function parseArgs(args) {
     '--okf-export': 'okf-export',
     '--links': 'links',
     '--secrets': 'secrets',
+    '--instructions': 'instructions',
+    '--task-contract': 'task-contract',
+    '--routing-failure': 'routing-failure',
+    '--prompt-assets': 'prompt-assets',
   };
   const parsedMode = modeByFlag[first];
-  if (!parsedMode) return { mode: 'help', root: process.cwd() };
+  if (!parsedMode) return { mode: 'invalid', root: process.cwd() };
   return { mode: parsedMode, root: args[1] && !args[1].startsWith('--') ? args[1] : process.cwd() };
 }
 
@@ -79,7 +96,11 @@ Usage:
   node scripts/lint.mjs --akm [path-to-akm-root]
   node scripts/lint.mjs --okf-export <path-to-okf-bundle>
   node scripts/lint.mjs --links [path]
-  node scripts/lint.mjs --secrets [path]`);
+  node scripts/lint.mjs --secrets [path]
+  node scripts/lint.mjs --instructions <manifest.json|md>
+  node scripts/lint.mjs --task-contract <contract.json|md>
+  node scripts/lint.mjs --routing-failure <ledger.json|jsonl|md>
+  node scripts/lint.mjs --prompt-assets <manifest.json|md>`);
 }
 
 function lintAkmRoot(akmRoot) {
@@ -101,6 +122,19 @@ function lintAkmRoot(akmRoot) {
   }
 
   console.log(`akm lint: ${notes.length} root note(s) checked`);
+}
+
+function lintStructuredInput(inputPath, label, validator) {
+  try {
+    const absoluteInput = resolve(inputPath);
+    const input = readStructuredFile(absoluteInput);
+    const report = validator(input, { baseDir: dirname(absoluteInput) });
+    for (const error of report.errors) errors.push(`${label} ${error}`);
+    for (const warning of report.warnings) warnings.push(`${label} ${warning}`);
+    console.log(`${label}: ${JSON.stringify(report.summary ?? {})}`);
+  } catch (error) {
+    errors.push(`${label} input error: ${error.message}`);
+  }
 }
 
 function lintAkmSchema(akmRoot, notes, prefix = '') {

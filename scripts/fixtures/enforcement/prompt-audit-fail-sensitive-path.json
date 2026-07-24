@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "roots": {"fixture": "."},
+  "assets": [
+    {
+      "id": "forbidden-auth-instruction",
+      "root": "fixture",
+      "path": "auth.json",
+      "type": "SOUL",
+      "owner": "operator",
+      "scope": {"kind": "profile", "target": "operator"},
+      "appliesWhen": "the operator profile is active",
+      "precedenceRank": 20,
+      "overrides": [],
+      "mustNotOverride": [],
+      "conflictKey": "profile-policy",
+      "directive": {"effect": "require", "value": "safe behavior"}
+    }
+  ]
+}

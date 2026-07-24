@@ -2,7 +2,7 @@
 
 > 기본 문서는 [README.md](README.md) (영문)입니다. 시스템 파일(99-system, adapters, templates)은 영어가 기본이며, 레이어에 저장하는 노트는 어떤 언어든 무방합니다.
 
-AI 에이전트용 범용 지식 운영 시스템. 순수 마크다운 — DB나 서버가 필요 없습니다. Claude Code, Codex, OpenClaw 및 파일을 읽을 수 있는 모든 에이전트에서 동작하며, 선택적인 무의존성 스크립트가 lint와 export를 담당합니다.
+AI 에이전트용 범용 지식 운영 시스템. 순수 마크다운 — DB나 서버가 필요 없습니다. Claude Code, Codex, OpenClaw 및 파일을 읽을 수 있는 모든 에이전트에서 동작하며, 선택적인 무의존성 스크립트가 lint·운영 계약 검사·export를 담당합니다.
 
 ## 핵심 개념
 
@@ -54,9 +54,11 @@ LLM Wiki가 "AI가 읽을 수 있는 지식 지도"라면, AKM은 그 지도 위
 
 OKF 호환 export: 내부 AKM schema는 유지하고 외부 공유용 bundle만 OKF 형태로 내보냅니다. `node scripts/export-okf.mjs --out dist/okf` 후 `node scripts/lint.mjs --okf-export dist/okf`로 검사합니다. 세부 규칙은 `99-system/OKF-COMPAT.md`.
 
-검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. 관리 노트는 전체 스키마를 따르며, 수정하지 않는 `10-sources/` 원본과 불투명한 `80-outputs/` 산출물은 AKM frontmatter를 생략할 수 있습니다. 단, `akmLayer`·`akmType`·`akmRole` 중 하나라도 쓰면 전체 스키마를 충족해야 합니다.
+검증: `node scripts/lint.mjs --akm`, `--links`, `--secrets`, `--okf-export <bundle>` — 스키마·enum·레이어 배치·깨진 링크·INDEX 정합성·시크릿 패턴·OKF export 품질 검사. v0.3의 `--task-contract`, `--instructions`, `--routing-failure`, `--prompt-assets`는 실행 계약·지시 우선순위·라우팅 실패·프롬프트 자산 수명주기를 읽기 전용으로 검사합니다. 관리 노트는 전체 스키마를 따르며, 수정하지 않는 `10-sources/` 원본과 불투명한 `80-outputs/` 산출물은 AKM frontmatter를 생략할 수 있습니다. 단, `akmLayer`·`akmType`·`akmRole` 중 하나라도 쓰면 전체 스키마를 충족해야 합니다.
 
 스크립트 lint는 결정론적 구조 검사이며, 결과가 실제 요청을 충족했는지 또는 출처가 claim을 실제로 지지하는지는 판정하지 않습니다. Tier 1 이상에서는 `99-system/VERIFICATION.md`의 request-fit·claim-support 검증을 별도로 적용합니다.
+
+v0.3의 `99-system/EVIDENCE-SCHEMA.md`는 검색 후보·직접 읽기·명명된 claim 지원·충돌을 분리하고, `99-system/TASK-CONTRACT-SCHEMA.md`는 산출물·정본 경로·소유자·실패 처리·readback·최대 실행시간을 고정합니다. 두 계약 모두 운영 볼트에서 검증된 범용 요소만 승격했으며, 장치·백업·개인 저장소·특정 에이전트 정책은 공개 코어에 포함하지 않습니다.
 
 대용량 오디오·영상·PDF·슬라이드는 텍스트 볼트 밖의 별도 에셋 루트에 두고 AKM 상대경로 구조를 미러링합니다. 상세 규칙은 `99-system/EXTERNAL-ASSETS.md`, 보안 규칙은 `99-system/SECURITY.md`를 따릅니다.
 

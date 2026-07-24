@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0.0",
+  "roots": {"fixture": "."},
+  "assets": [
+    {
+      "assetId": "fixture-agents-no-changelog",
+      "root": "fixture",
+      "path": "instructions/AGENTS.md",
+      "kind": "AGENTS",
+      "owner": "maintainer",
+      "scope": "project",
+      "canonicalSource": "fixture:instructions/AGENTS.md",
+      "version": "1.0.0",
+      "state": "active",
+      "lastReviewedAt": "2026-07-19",
+      "lifecycle": {
+        "vcs": "git",
+        "restoreMethod": "git checkout",
+        "restoreEvidence": "fixture:test"
+      }
+    }
+  ]
+}

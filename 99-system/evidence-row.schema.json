@@ -1,0 +1,685 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://akm.cmdspace.work/schema/evidence-contract-1.0.0.json",
+  "title": "AKM EvidenceRow and EvidencePacket Contract",
+  "description": "Machine-readable P0 contract for normalized retrieval evidence and reproducible evidence packets. Canonical Markdown and direct source reads remain authoritative.",
+  "oneOf": [
+    {"$ref": "#/$defs/EvidenceRow"},
+    {"$ref": "#/$defs/EvidencePacket"}
+  ],
+  "$defs": {
+    "Timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "RelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "Checksum": {
+      "type": "string",
+      "pattern": "^(?:[A-Fa-f0-9]{64}|unavailable)$"
+    },
+    "Locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "enum": ["path", "line-range", "heading", "page", "symbol", "thread", "row", "url-fragment", "other"]
+        },
+        "value": {"type": "string", "minLength": 1},
+        "headingPath": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "startLine": {"type": "integer", "minimum": 1},
+        "endLine": {"type": "integer", "minimum": 1},
+        "page": {"type": "integer", "minimum": 1},
+        "symbol": {"type": "string", "minLength": 1},
+        "threadId": {"type": "string", "minLength": 1},
+        "anchor": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"required": ["startLine", "endLine"]},
+          "then": {
+            "properties": {
+              "endLine": {"type": "integer", "minimum": 1}
+            }
+          }
+        }
+      ]
+    },
+    "SourceVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "checksumAlgorithm", "observedAt"],
+      "properties": {
+        "revision": {"type": "string", "minLength": 1},
+        "checksumAlgorithm": {"enum": ["sha256", "source-native", "none"]},
+        "checksum": {"$ref": "#/$defs/Checksum"},
+        "observedAt": {"$ref": "#/$defs/Timestamp"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"checksumAlgorithm": {"enum": ["sha256", "source-native"]}},
+            "required": ["checksumAlgorithm"]
+          },
+          "then": {"required": ["checksum"]}
+        },
+        {
+          "if": {
+            "properties": {"checksumAlgorithm": {"const": "none"}},
+            "required": ["checksumAlgorithm"]
+          },
+          "then": {"not": {"required": ["checksum"]}}
+        }
+      ]
+    },
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "canonicalUri", "sourceType", "classification", "projectScopes", "derived", "version"],
+      "properties": {
+        "sourceId": {"type": "string", "minLength": 1},
+        "canonicalUri": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?:file|https|qmd|akm|source):"
+        },
+        "canonicalPath": {"$ref": "#/$defs/RelativePath"},
+        "sourceType": {
+          "enum": ["markdown", "web", "paper", "book", "code", "thread", "transcript", "database", "artifact", "other"]
+        },
+        "classification": {"enum": ["public", "non-sensitive", "private", "restricted", "unknown"]},
+        "title": {"type": "string", "minLength": 1},
+        "authors": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "originUri": {"type": "string", "minLength": 1},
+        "publisher": {"type": "string", "minLength": 1},
+        "parentSourceId": {"type": "string", "minLength": 1},
+        "derived": {"type": "boolean"},
+        "derivationMethod": {"type": "string", "minLength": 1},
+        "accessPolicyRef": {"type": "string", "minLength": 1},
+        "projectScopes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "version": {"$ref": "#/$defs/SourceVersion"},
+        "sourceMetadata": {
+          "type": "object",
+          "description": "Bounded non-secret source-specific metadata.",
+          "additionalProperties": {
+            "type": ["string", "number", "integer", "boolean", "null"]
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"derived": {"const": true}}, "required": ["derived"]},
+          "then": {"required": ["parentSourceId", "derivationMethod"]}
+        }
+      ]
+    },
+    "Scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectId", "manifestId", "manifestVersion", "scopeDecision", "collection", "locator"],
+      "properties": {
+        "projectId": {"type": "string", "minLength": 1},
+        "manifestId": {"type": "string", "minLength": 1},
+        "manifestVersion": {"type": "string", "minLength": 1},
+        "scopeDecision": {"enum": ["in-scope", "explicit-expansion", "out-of-scope", "denied"]},
+        "collection": {"type": "string", "minLength": 1},
+        "locator": {"$ref": "#/$defs/Locator"},
+        "scopeReason": {"type": "string", "minLength": 1}
+      }
+    },
+    "Authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "rationale", "policyRef"],
+      "properties": {
+        "level": {"enum": ["canonical", "official", "primary", "reviewed", "secondary", "internal", "unknown"]},
+        "rationale": {"type": "string", "minLength": 1},
+        "policyRef": {"type": "string", "minLength": 1},
+        "owner": {"type": "string", "minLength": 1},
+        "reviewedAt": {"$ref": "#/$defs/Timestamp"},
+        "supersedesSourceIds": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "Freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "checkedAt", "policyRef", "reason"],
+      "properties": {
+        "state": {"enum": ["current", "unknown", "stale", "superseded"]},
+        "checkedAt": {"$ref": "#/$defs/Timestamp"},
+        "policyRef": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "sourceModifiedAt": {"$ref": "#/$defs/Timestamp"},
+        "capturedAt": {"$ref": "#/$defs/Timestamp"},
+        "watermark": {"type": "string", "minLength": 1},
+        "staleAfter": {"$ref": "#/$defs/Timestamp"},
+        "supersededBySourceId": {"type": "string", "minLength": 1}
+      }
+    },
+    "Retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lane", "query", "rank", "resultSetId", "parameters"],
+      "properties": {
+        "lane": {"enum": ["exact", "qmd-lexical", "qmd-semantic", "graphify-relationship", "direct-read", "other"]},
+        "query": {"type": "string", "minLength": 1},
+        "rank": {"type": "integer", "minimum": 1},
+        "resultSetId": {"type": "string", "minLength": 1},
+        "parameters": {"type": "object", "additionalProperties": true},
+        "rawScore": {"type": "number"},
+        "rawScoreMeaning": {"type": "string", "minLength": 1},
+        "normalizedScore": {"type": "number"},
+        "normalizationMethod": {"type": "string", "minLength": 1},
+        "fusionContribution": {"type": "number"},
+        "fusionMethod": {"enum": ["not-fused", "deterministic-priority", "rrf", "other"]},
+        "matchedTerms": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "relationshipPath": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "latencyMs": {"type": "number", "minimum": 0},
+        "retrievedAt": {"$ref": "#/$defs/Timestamp"}
+      },
+      "dependentRequired": {
+        "rawScore": ["rawScoreMeaning"],
+        "normalizedScore": ["normalizationMethod"]
+      }
+    },
+    "ContextExpansion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policyRef", "bytesAdded", "locator"],
+      "properties": {
+        "policyRef": {"type": "string", "minLength": 1},
+        "bytesAdded": {"type": "integer", "minimum": 0},
+        "locator": {"$ref": "#/$defs/Locator"}
+      }
+    },
+    "Content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["excerpt", "excerptChecksum"],
+      "properties": {
+        "excerpt": {"type": "string", "minLength": 1},
+        "excerptChecksum": {"$ref": "#/$defs/Checksum"},
+        "language": {"type": "string", "minLength": 2},
+        "before": {"type": "string"},
+        "after": {"type": "string"},
+        "heading": {"type": "string", "minLength": 1},
+        "contextExpansion": {"$ref": "#/$defs/ContextExpansion"},
+        "redactions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "reason"],
+          "properties": {
+            "count": {"type": "integer", "minimum": 0},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "DirectRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["performed"],
+      "properties": {
+        "performed": {"type": "boolean"},
+        "readAt": {"$ref": "#/$defs/Timestamp"},
+        "readBy": {"type": "string", "minLength": 1},
+        "readMethod": {"enum": ["direct-file-read", "direct-web-read", "source-api-read", "other"]},
+        "locatorRead": {"type": "string", "minLength": 1},
+        "observedRevision": {"type": "string", "minLength": 1},
+        "observedChecksum": {"$ref": "#/$defs/Checksum"},
+        "checksumMatch": {"type": ["boolean", "null"]},
+        "contextIncluded": {"type": "boolean"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"performed": {"const": true}}, "required": ["performed"]},
+          "then": {"required": ["readAt", "readBy", "readMethod", "locatorRead", "observedRevision", "contextIncluded"]}
+        }
+      ]
+    },
+    "VerificationEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "at", "by", "reason"],
+      "properties": {
+        "state": {"enum": ["candidate", "direct-read", "claim-supported", "conflicted", "stale", "rejected"]},
+        "at": {"$ref": "#/$defs/Timestamp"},
+        "by": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "Verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "verifiedBy", "notes"],
+      "properties": {
+        "state": {"enum": ["candidate", "direct-read", "claim-supported", "conflicted", "stale", "rejected"]},
+        "verifiedAt": {"$ref": "#/$defs/Timestamp"},
+        "verifiedBy": {"type": "string", "minLength": 1},
+        "notes": {"type": "string"},
+        "claimIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "directRead": {"$ref": "#/$defs/DirectRead"},
+        "conflictIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "rejectionReasons": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "history": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/VerificationEvent"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"const": "candidate"}}, "required": ["state"]},
+          "then": {"properties": {"claimIds": {"maxItems": 0}}}
+        },
+        {
+          "if": {"properties": {"state": {"enum": ["direct-read", "claim-supported"]}}, "required": ["state"]},
+          "then": {
+            "required": ["verifiedAt", "directRead"],
+            "properties": {
+              "directRead": {
+                "allOf": [
+                  {"$ref": "#/$defs/DirectRead"},
+                  {"properties": {"performed": {"const": true}}}
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"state": {"const": "claim-supported"}}, "required": ["state"]},
+          "then": {"required": ["claimIds"], "properties": {"claimIds": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"state": {"const": "conflicted"}}, "required": ["state"]},
+          "then": {"required": ["conflictIds"], "properties": {"conflictIds": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"state": {"const": "rejected"}}, "required": ["state"]},
+          "then": {"required": ["rejectionReasons"], "properties": {"rejectionReasons": {"minItems": 1}}}
+        }
+      ]
+    },
+    "EvidenceRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "rowType", "evidenceId", "source", "scope", "authority", "freshness", "retrieval", "content", "verification"],
+      "properties": {
+        "schemaVersion": {"const": "1.0.0"},
+        "rowType": {"const": "EvidenceRow"},
+        "evidenceId": {"type": "string", "minLength": 8},
+        "source": {"$ref": "#/$defs/Source"},
+        "scope": {"$ref": "#/$defs/Scope"},
+        "authority": {"$ref": "#/$defs/Authority"},
+        "freshness": {"$ref": "#/$defs/Freshness"},
+        "retrieval": {"$ref": "#/$defs/Retrieval"},
+        "content": {"$ref": "#/$defs/Content"},
+        "verification": {"$ref": "#/$defs/Verification"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "verification": {
+                "properties": {"state": {"const": "stale"}},
+                "required": ["state"]
+              }
+            },
+            "required": ["verification"]
+          },
+          "then": {
+            "properties": {
+              "freshness": {
+                "properties": {"state": {"enum": ["stale", "superseded"]}},
+                "required": ["state"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "LaneRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lane", "status", "query", "parameters", "resultCount"],
+      "properties": {
+        "lane": {"enum": ["exact", "qmd-lexical", "qmd-semantic", "graphify-relationship", "direct-read", "other"]},
+        "status": {"enum": ["completed", "skipped", "failed"]},
+        "query": {"type": "string"},
+        "parameters": {"type": "object", "additionalProperties": true},
+        "resultCount": {"type": "integer", "minimum": 0},
+        "startedAt": {"$ref": "#/$defs/Timestamp"},
+        "finishedAt": {"$ref": "#/$defs/Timestamp"},
+        "latencyMs": {"type": "number", "minimum": 0},
+        "skipReason": {"type": "string", "minLength": 1},
+        "error": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "skipped"}}, "required": ["status"]},
+          "then": {"required": ["skipReason"]}
+        },
+        {
+          "if": {"properties": {"status": {"const": "failed"}}, "required": ["status"]},
+          "then": {"required": ["error"]}
+        }
+      ]
+    },
+    "FusionContribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceId", "laneRanks", "contribution", "finalRank"],
+      "properties": {
+        "evidenceId": {"type": "string", "minLength": 1},
+        "laneRanks": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 1}
+        },
+        "contribution": {"type": "number"},
+        "finalRank": {"type": "integer", "minimum": 1},
+        "tieBreakReason": {"type": "string"}
+      }
+    },
+    "ExcludedRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceId", "reason"],
+      "properties": {
+        "evidenceId": {"type": "string", "minLength": 1},
+        "reason": {"enum": ["denied", "out-of-scope", "duplicate", "source-cap", "stale", "identity-error", "invalid-locator", "other"]},
+        "notes": {"type": "string"}
+      }
+    },
+    "Fusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "parameters", "priorityOrder", "dedupKeys", "perSourceCap", "maxRows", "diversityFields", "contributions", "excludedRows"],
+      "properties": {
+        "method": {"enum": ["deterministic-priority", "rrf"]},
+        "parameters": {"type": "object", "additionalProperties": true},
+        "priorityOrder": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"enum": ["scope", "authority", "exact-support", "lane-rank", "semantic-relevance", "relationship-support", "freshness"]}
+        },
+        "dedupKeys": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {"enum": ["sourceId", "canonicalUri", "revision", "checksum", "locator"]}
+        },
+        "perSourceCap": {"type": "integer", "minimum": 1},
+        "maxRows": {"type": "integer", "minimum": 1},
+        "diversityFields": {
+          "type": "array",
+          "items": {"enum": ["sourceId", "sourceType", "collection", "authority", "projectScope"]},
+          "uniqueItems": true
+        },
+        "contributions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FusionContribution"}
+        },
+        "excludedRows": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/ExcludedRow"}
+        }
+      }
+    },
+    "Claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimId", "claimText", "importance", "claimClass", "supportRowIds", "status", "notes"],
+      "properties": {
+        "claimId": {"type": "string", "minLength": 1},
+        "claimText": {"type": "string", "minLength": 1},
+        "importance": {"enum": ["important", "supporting"]},
+        "claimClass": {"enum": ["number", "date", "system-state", "recommendation", "policy", "interpretation", "other"]},
+        "supportRowIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "status": {"enum": ["unsupported", "candidate-only", "direct-read-pending", "supported", "conflicted", "rejected"]},
+        "notes": {"type": "string"}
+      }
+    },
+    "Conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conflictId", "topic", "rowIds", "type", "status", "resolution", "claimIds"],
+      "properties": {
+        "conflictId": {"type": "string", "minLength": 1},
+        "topic": {"type": "string", "minLength": 1},
+        "rowIds": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "type": {"enum": ["authority", "freshness", "scope", "factual", "version", "interpretation"]},
+        "status": {"enum": ["open", "resolved", "accepted-divergence"]},
+        "resolution": {"type": "string"},
+        "resolvedBy": {"type": "string", "minLength": 1},
+        "resolvedAt": {"$ref": "#/$defs/Timestamp"},
+        "claimIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "resolved"}}, "required": ["status"]},
+          "then": {"required": ["resolvedBy", "resolvedAt"], "properties": {"resolution": {"minLength": 1}}}
+        }
+      ]
+    },
+    "MissingEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["missingId", "claimIds", "description", "required", "status"],
+      "properties": {
+        "missingId": {"type": "string", "minLength": 1},
+        "claimIds": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "description": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"},
+        "status": {"enum": ["open", "waived", "resolved"]},
+        "waiverReason": {"type": "string", "minLength": 1}
+      }
+    },
+    "DirectReadQueueItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["queueId", "rowId", "claimIds", "priority", "reason", "required", "status"],
+      "properties": {
+        "queueId": {"type": "string", "minLength": 1},
+        "rowId": {"type": "string", "minLength": 1},
+        "claimIds": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "priority": {"enum": ["critical", "high", "normal", "low"]},
+        "reason": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"},
+        "status": {"enum": ["pending", "completed", "skipped", "failed"]},
+        "completionRowId": {"type": "string", "minLength": 1},
+        "skipReason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "completed"}}, "required": ["status"]},
+          "then": {"required": ["completionRowId"]}
+        },
+        {
+          "if": {"properties": {"status": {"const": "skipped"}}, "required": ["status"]},
+          "then": {"required": ["skipReason"]}
+        }
+      ]
+    },
+    "Metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputCandidateCount", "eligibleCount", "deduplicatedSourceCount", "capExcludedCount", "finalRowCount", "uniqueSourceCount", "uniqueSourceTypeCount", "directReadRequiredCount", "directReadCompletedCount", "importantClaimCount", "importantClaimSupportedCount", "citationCoverage", "staleHitCount", "authorityScopeErrorCount", "inputBytes", "estimatedContextTokens", "totalLatencyMs"],
+      "properties": {
+        "inputCandidateCount": {"type": ["integer", "null"], "minimum": 0},
+        "eligibleCount": {"type": ["integer", "null"], "minimum": 0},
+        "deduplicatedSourceCount": {"type": ["integer", "null"], "minimum": 0},
+        "capExcludedCount": {"type": ["integer", "null"], "minimum": 0},
+        "finalRowCount": {"type": ["integer", "null"], "minimum": 0},
+        "uniqueSourceCount": {"type": ["integer", "null"], "minimum": 0},
+        "uniqueSourceTypeCount": {"type": ["integer", "null"], "minimum": 0},
+        "directReadRequiredCount": {"type": ["integer", "null"], "minimum": 0},
+        "directReadCompletedCount": {"type": ["integer", "null"], "minimum": 0},
+        "importantClaimCount": {"type": ["integer", "null"], "minimum": 0},
+        "importantClaimSupportedCount": {"type": ["integer", "null"], "minimum": 0},
+        "citationCoverage": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "staleHitCount": {"type": ["integer", "null"], "minimum": 0},
+        "authorityScopeErrorCount": {"type": ["integer", "null"], "minimum": 0},
+        "inputBytes": {"type": ["integer", "null"], "minimum": 0},
+        "estimatedContextTokens": {"type": ["integer", "null"], "minimum": 0},
+        "totalLatencyMs": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "PacketVerification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "verdictReasons", "verifiedBy", "rollbackRequired", "rollbackReason"],
+      "properties": {
+        "verdict": {"enum": ["NOT_TESTED", "PASS", "PASS_WITH_NOTE", "HOLD", "FAIL"]},
+        "verdictReasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "verifiedBy": {"type": "string", "minLength": 1},
+        "verifiedAt": {"$ref": "#/$defs/Timestamp"},
+        "rollbackRequired": {"type": "boolean"},
+        "rollbackReason": {"type": "string"}
+      }
+    },
+    "EvidencePacket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "packetType", "packetId", "taskId", "query", "project", "policies", "generatedAt", "lanesRun", "fusion", "evidenceRows", "claims", "conflicts", "missingEvidence", "directReadQueue", "metrics", "verification"],
+      "properties": {
+        "schemaVersion": {"const": "1.0.0"},
+        "packetType": {"const": "EvidencePacket"},
+        "packetId": {"type": "string", "minLength": 8},
+        "taskId": {"type": "string", "minLength": 1},
+        "query": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["original", "normalizedIntent", "class", "importantClaimClasses"],
+          "properties": {
+            "original": {"type": "string", "minLength": 1},
+            "normalizedIntent": {"type": "string", "minLength": 1},
+            "class": {"enum": ["exact-path-property", "literal-token", "semantic-recall", "relationship-neighborhood", "authority-conflict", "mixed"]},
+            "importantClaimClasses": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"enum": ["number", "date", "system-state", "recommendation", "policy", "interpretation", "other"]}
+            }
+          }
+        },
+        "project": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["projectId", "manifestId", "manifestVersion", "manifestChecksum"],
+          "properties": {
+            "projectId": {"type": "string", "minLength": 1},
+            "manifestId": {"type": "string", "minLength": 1},
+            "manifestVersion": {"type": "string", "minLength": 1},
+            "manifestChecksum": {"$ref": "#/$defs/Checksum"}
+          }
+        },
+        "policies": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["retrievalPolicyRef", "retrievalPolicyVersion", "authorityPolicyRef", "freshnessPolicyRef", "verificationPolicyRef", "securityPolicyRef"],
+          "properties": {
+            "retrievalPolicyRef": {"type": "string", "minLength": 1},
+            "retrievalPolicyVersion": {"type": "string", "minLength": 1},
+            "authorityPolicyRef": {"type": "string", "minLength": 1},
+            "freshnessPolicyRef": {"type": "string", "minLength": 1},
+            "verificationPolicyRef": {"type": "string", "minLength": 1},
+            "securityPolicyRef": {"type": "string", "minLength": 1}
+          }
+        },
+        "generatedAt": {"$ref": "#/$defs/Timestamp"},
+        "lanesRun": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/LaneRun"}
+        },
+        "fusion": {"$ref": "#/$defs/Fusion"},
+        "evidenceRows": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/EvidenceRow"}
+        },
+        "claims": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Claim"}
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Conflict"}
+        },
+        "missingEvidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/MissingEvidence"}
+        },
+        "directReadQueue": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/DirectReadQueueItem"}
+        },
+        "metrics": {"$ref": "#/$defs/Metrics"},
+        "verification": {"$ref": "#/$defs/PacketVerification"}
+      }
+    }
+  }
+}

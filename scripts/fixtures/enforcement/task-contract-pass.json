@@ -1,0 +1,33 @@
+{
+  "contractVersion": "1.0.0",
+  "taskId": "t_fixture_pass",
+  "purpose": "Validate a bounded AKM report without mutating canonical notes.",
+  "inputs": [
+    {"path": "AGENTS.md", "required": true, "verify": "exists"}
+  ],
+  "outputs": [
+    {"path": "/tmp/akm-task-contract-pass-report.json", "kind": "report", "required": true}
+  ],
+  "canonicalPath": "/tmp/akm-task-contract-pass-report.json",
+  "format": ["UTF-8 JSON", "deterministic key order"],
+  "sources": [
+    {"ref": "99-system/TASK-CONTRACT-SCHEMA.md", "role": "source-of-truth"}
+  ],
+  "owner": {"primary": "operator", "handoff": "after tests and readback pass"},
+  "failureHandling": {
+    "blockedWhen": ["external runtime dependency is unavailable"],
+    "holdWhen": ["an internal verification gate is unmet"],
+    "preserve": ["report output and command exit code"]
+  },
+  "completion": {
+    "required": ["required report exists and reads back", "all verification commands return the expected exit"],
+    "optional": ["cosmetic report wording"]
+  },
+  "verification": [
+    {"command": "node scripts/lint.mjs --task-contract scripts/fixtures/enforcement/task-contract-pass.json", "expectedExit": 0, "readback": "/tmp/akm-task-contract-pass-report.json"}
+  ],
+  "runtime": {"maxSeconds": 2700, "goalMode": false},
+  "nonGoals": ["modify input documents", "delete files", "write outside the declared scope"],
+  "securityExclusions": ["auth", "token", "cookie", "session-db", "secret"],
+  "blockers": []
+}

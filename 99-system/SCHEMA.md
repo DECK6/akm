@@ -162,3 +162,14 @@ date modified: 2026-06-12
 - One file = one topic. Split files that mix topics
 - Reference other notes with `[[wikilinks]]` (no file extension)
 - The AKM core uses only `akm*`-prefixed custom fields to avoid colliding with fields from other systems (e.g. an Obsidian vault's `type`). When syncing a note into another system, the adapter adds that system's fields
+
+## Operational-document budgets
+
+Complete first-pass depth applies to durable knowledge, procedures, evaluations, and outputs. It does not justify verbose indexes, logs, current-state files, contracts, or machine evidence.
+
+- `INDEX.md` / `INDEX.local.md`: one concise routing pointer per entry; explanation belongs in the target note.
+- `LOG.md`: one outcome plus one canonical link per change. Detailed metrics and readbacks belong in a run, audit, or external manifest.
+- Project or cron state: current queue, current gaps, authoritative pointers, and at most three recent runs.
+- Hot cache: active focus, current context, open loops, authoritative pointers, and at most three recent events.
+- Task contracts and machine evidence: only fields required for execution or verification; do not repeat narrative summaries.
+- Omit any section that changes no decision, retrieval, execution, verification, recovery, or future reuse.

@@ -79,6 +79,8 @@ Substantive lint adds two issue types beyond structural Markdown/frontmatter che
 
 `scripts/lint.mjs` checks deterministic structure, metadata, links, indexes, and secret patterns. It does not pretend to automate these semantic judgments. Agents, qualified reviewers, or task-specific evaluators apply the verification standard and record evidence.
 
+When retrieval uses multiple lanes or supports important claims, normalize candidates and direct reads with `99-system/EVIDENCE-SCHEMA.md`. A retrieved row remains a candidate until its identified source location is directly read. Claim support applies only to named claims, and conflicting or stale evidence remains visible. The evidence packet is a derived, disposable audit surface; canonical Markdown and original sources remain authoritative.
+
 ## 4. Task Evaluation Guidance Packet — Tier 2+
 
 Before final verification, create a compact task-specific packet in the working note or an associated verification note.

@@ -11,6 +11,11 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 - [[LOOP]] — seven-step operating loop + Learn Back mapping table
 - [[VERIFICATION]] — DEER-informed risk tiers, seven-dimension rubric, claim checks, verdicts, and Learn Back routing
 - [[SECURITY]] — no secret values, private layers, output review rules
+- [[EVIDENCE-SCHEMA]] — candidate, direct-read, claim-support, conflict, and reproducible evidence-packet contract
+- `evidence-row.schema.json` — JSON Schema 2020-12 companion for EvidenceRow and EvidencePacket
+- [[TASK-CONTRACT-SCHEMA]] — bounded artifact-work contract, readback requirements, runtime limit, and dispatch gate
+- `task-contract.schema.json` — JSON Schema 2020-12 companion for task contracts
+- [[ENFORCEMENT]] — read-only instruction, task-contract, routing-failure, and prompt-asset lint modes
 - [[EXTERNAL-ASSETS]] — keep large binaries outside the text vault while preserving relative-path traceability
 - [[MIGRATION]] — phased consolidation guide for adopting an existing Markdown or Obsidian vault
 - [[OKF-COMPAT]] — OKF-compatible export/import boundary, field mapping, indexes, and lint expectations
@@ -18,8 +23,8 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 - [[GLOSSARY]] — terminology
 - [[INDEX]] — this file
 - [[LOG]] — change history
-- `templates/` — 12 note templates: concept, entity, comparison, skill, failure-pattern, decision, audit, rubric, verification, claim-ledger, run, handoff
-- `../scripts/lint.mjs` — zero-dependency validator (AKM strict mode, OKF export mode, links, secrets)
+- `templates/` — 14 templates: 12 note templates plus task contract and project retrieval manifest
+- `../scripts/lint.mjs` — zero-dependency validator (AKM, OKF, links, secrets, instructions, task contracts, routing failures, prompt assets)
 - `../scripts/export-okf.mjs` — exports selected AKM layers as an OKF-compatible bundle
 - `../scripts/index.mjs` — generates directory-level `INDEX.local.md` or OKF `index.md` files
 

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "roots": {"fixture": "."},
+  "assets": [
+    {
+      "assetId": "forbidden-auth",
+      "root": "fixture",
+      "path": "auth.json",
+      "kind": "system",
+      "owner": "operator",
+      "scope": "profile",
+      "canonicalSource": "fixture:auth.json",
+      "version": "1.0.0",
+      "state": "active",
+      "lastReviewedAt": "2026-07-19",
+      "lifecycle": {"vcs": "none", "restoreMethod": "none", "restoreEvidence": "none"}
+    }
+  ]
+}

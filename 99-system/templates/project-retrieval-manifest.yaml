@@ -1,0 +1,371 @@
+# P0 template only. Copy, give the copy a new manifestId/version, replace all
+# "replace-*" values, hash the final file, and obtain P1 approval before use.
+manifestVersion: "1.0.0"
+manifestId: "replace-with-project-manifest-id"
+projectId: "replace-with-project-id"
+displayName: "Replace with project display name"
+description: "Bounded retrieval scope for public and non-sensitive Markdown only."
+owner: "knowledge-maintainer"
+phase: "P0-design-only"
+implementationStatus: "not-implemented"
+status: "template"
+createdAt: "2026-07-20T00:00:00+09:00"
+modifiedAt: "2026-07-20T00:00:00+09:00"
+manifestChecksum:
+  algorithm: "sha256"
+  value: "replace-with-sha256-before-P1"
+
+canonicalTruth:
+  sourceOfTruth:
+    - "canonical Markdown"
+    - "directly read original source"
+  derivedSurfaces:
+    - name: "qmd index"
+      disposable: true
+      canonical: false
+    - name: "Graphify graph"
+      disposable: true
+      canonical: false
+    - name: "EvidenceRow and EvidencePacket projection"
+      disposable: true
+      canonical: false
+  rollbackKeeps:
+    - "exact search"
+    - "qmd"
+    - "Graphify"
+    - "direct file reads"
+    - "canonical Markdown"
+
+scope:
+  defaultDecision: "deny"
+  allowedClassifications:
+    - "public"
+    - "non-sensitive"
+  deniedClassifications:
+    - "private"
+    - "restricted"
+    - "unknown"
+  allowedContentTypes:
+    - "text/markdown"
+  maxCorpusDocuments: 200
+  minPilotDocuments: 50
+  requireRelativePaths: true
+  rejectParentTraversal: true
+  rejectSymlinks: true
+  rejectNestedRepositories: true
+  allowExplicitScopeExpansion: true
+  expansionRequires:
+    - "recorded reason"
+    - "manifest version increment"
+    - "security pre-check"
+    - "new manifest checksum"
+
+sourceRefs:
+  - sourceId: "akm:99-system:public-markdown"
+    rootAlias: "akm"
+    rootPath: "."
+    classification: "public"
+    shared: true
+    include:
+      - "99-system/*.md"
+    exclude:
+      - "99-system/INDEX.local.md"
+      - "99-system/MAPPING-*.md"
+      - "99-system/**/*private*"
+      - "99-system/**/*personal*"
+    retrievalLanes:
+      - "exact"
+      - "qmd-lexical"
+      - "qmd-semantic"
+      - "graphify-relationship"
+      - "direct-read"
+    authorityPolicy: "canonical-system-first"
+    freshnessPolicy: "working-tree-revision-and-checksum"
+  - sourceId: "akm:procedures:public-markdown"
+    rootAlias: "akm"
+    rootPath: "."
+    classification: "non-sensitive"
+    shared: true
+    include:
+      - "50-procedures/**/*.md"
+    exclude:
+      - "**/*personal*"
+      - "**/*counsel*"
+      - "**/*health*"
+      - "**/*contact*"
+    retrievalLanes:
+      - "exact"
+      - "qmd-lexical"
+      - "qmd-semantic"
+      - "graphify-relationship"
+      - "direct-read"
+    authorityPolicy: "reviewed-procedure"
+    freshnessPolicy: "source-revision-and-checksum"
+  - sourceId: "akm:retrieval-rubrics:public-markdown"
+    rootAlias: "akm"
+    rootPath: "."
+    classification: "non-sensitive"
+    shared: true
+    include:
+      - "70-evaluation/rubrics/*.md"
+    exclude:
+      - "**/*personal*"
+      - "**/*private*"
+    retrievalLanes:
+      - "exact"
+      - "qmd-lexical"
+      - "qmd-semantic"
+      - "graphify-relationship"
+      - "direct-read"
+    authorityPolicy: "reviewed-rubric"
+    freshnessPolicy: "source-revision-and-checksum"
+
+sharedSourceRefs:
+  - "akm:99-system:public-markdown"
+  - "akm:procedures:public-markdown"
+  - "akm:retrieval-rubrics:public-markdown"
+
+security:
+  policyRef: "99-system/SECURITY.md"
+  noContentInspectionForDeniedPaths: true
+  denyAbsolutePaths: true
+  denyEscapingPaths: true
+  denySecretValues: true
+  denyExistenceLeakage: true
+  denyPathTokens:
+    - "/personal/"
+    - "/people/"
+    - "/counseling/"
+    - "/health/"
+    - "/contacts/"
+    - "/private/"
+    - "/auth/"
+    - "/oauth/"
+    - "/tokens/"
+    - "/cookies/"
+    - "/sessions/"
+    - "/credentials/"
+    - "/logs/"
+    - "10-sources/personal/"
+    - "30-context/people/"
+    - "70-evaluation/audits/personal/"
+  denyBasenameTokens:
+    - ".env"
+    - "auth"
+    - "oauth"
+    - "token"
+    - "cookie"
+    - "password"
+    - "secret"
+    - "credential"
+    - "session"
+    - "state.db"
+  denyExtensions:
+    - ".db"
+    - ".sqlite"
+    - ".sqlite3"
+    - ".log"
+    - ".wav"
+    - ".mp3"
+    - ".mp4"
+    - ".png"
+    - ".jpg"
+    - ".jpeg"
+    - ".pdf"
+    - ".zip"
+  denySourceTypes:
+    - "private-transcript"
+    - "personal-conversation"
+    - "credential"
+    - "session-state"
+    - "binary"
+  reportDeniedSourcesAs: "count-only"
+
+retrieval:
+  collection: "akm"
+  graphPath: "graphify-out/graph.json"
+  exactFirst:
+    enabled: true
+    triggers:
+      - "known path"
+      - "filename"
+      - "frontmatter property"
+      - "manifest field"
+      - "task or source ID"
+      - "literal error string"
+      - "rare flag or token"
+    stopWhen:
+      - "the exact eligible source is uniquely identified"
+      - "the required locator can be directly read"
+  selectiveFanout:
+    qmdLexicalFor:
+      - "keyword or rare-token recall after exact search"
+      - "wording variants with lexical anchors"
+    qmdSemanticFor:
+      - "paraphrase"
+      - "conceptual recall"
+      - "wording drift"
+    graphifyFor:
+      - "wikilink or tag neighborhood"
+      - "hub or bridge relation"
+      - "entity or dependency relation"
+    skipUnusedLanes: true
+    recordSkipReason: true
+  qmd:
+    lexicalCommand: "qmd search <query> -c akm --json --line-numbers"
+    hybridCommand: "qmd query <query> -c akm --json --line-numbers --explain"
+    candidateLimit: 40
+    resultLimit: 20
+  graphify:
+    queryCommand: "graphify query <question> --graph graphify-out/graph.json --budget 2000"
+    explainCommand: "graphify explain <node> --graph graphify-out/graph.json"
+    resultLimit: 20
+
+rankingPolicy:
+  policyId: "akm-authority-first-v1"
+  priorityOrder:
+    - "scope-match"
+    - "authority"
+    - "exact-support"
+    - "lane-rank"
+    - "semantic-or-relationship-support"
+    - "freshness-tiebreak"
+  authorityOrder:
+    - "canonical"
+    - "official"
+    - "primary"
+    - "reviewed"
+    - "secondary"
+    - "internal"
+    - "unknown"
+  freshnessMayOverrideAuthority: false
+  rawScoresComparableAcrossLanes: false
+  candidateRankIsTruth: false
+
+fusion:
+  method: "deterministic-priority"
+  optionalComparisonMethod: "rrf"
+  rrfComparisonOnly: true
+  rrfDefaultK: 60
+  recordLaneContributions: true
+  recordParameters: true
+  recordTieBreaks: true
+  dedup:
+    enabled: true
+    keys:
+      - "sourceId"
+      - "canonicalUri"
+      - "revision"
+      - "checksum"
+    sameLocatorCollapse: true
+    preserveBestLocatorAndLaneTrace: true
+  caps:
+    perSource: 2
+    finalRows: 20
+    applyAfterDedup: true
+  diversity:
+    fields:
+      - "sourceId"
+      - "sourceType"
+      - "collection"
+      - "authority"
+    requireUniqueSourcesWhenAvailable: 5
+
+neighborExpansion:
+  enabled: true
+  stage: "after-fusion"
+  winnerRowsOnly: true
+  maxWinners: 5
+  beforeBlocks: 1
+  afterBlocks: 1
+  maxBytesPerWinner: 6000
+  preserveOriginalLocator: true
+  includeHeadingPath: true
+  includePreconditionsAndCaveats: true
+
+verificationPolicy:
+  schemaRef: "99-system/EVIDENCE-SCHEMA.md"
+  machineSchemaRef: "99-system/evidence-row.schema.json"
+  candidateMaySupportClaim: false
+  directReadRequiredForImportantClaims: true
+  importantClaimClasses:
+    - "number"
+    - "date"
+    - "system-state"
+    - "recommendation"
+    - "policy"
+    - "authority-conflict"
+    - "scope-change"
+  claimSupportRequiresClaimIds: true
+  unresolvedBlockingConflictVerdict: "HOLD"
+  checksumMismatchVerdict: "FAIL"
+  requiredDirectReadMayBeSkipped: false
+
+packetPolicy:
+  include:
+    - "query and normalized intent"
+    - "manifest version and checksum"
+    - "lanes run and skipped"
+    - "fusion contributions"
+    - "source dedup and cap exclusions"
+    - "neighbor expansion locators"
+    - "direct-read queue"
+    - "claim support"
+    - "conflicts"
+    - "missing evidence"
+    - "metrics"
+    - "verification verdict"
+  maxExcerptBytesPerRow: 2000
+  neverInclude:
+    - "secret values"
+    - "private transcript content"
+    - "denied-source titles or excerpts"
+    - "auth, cookie, token, or session data"
+
+freshnessPolicy:
+  policyId: "akm-freshness-tiebreak-v1"
+  preserve:
+    - "source revision"
+    - "checksum"
+    - "capturedAt"
+    - "checkedAt"
+    - "source-native watermark when available"
+  missingFreshnessState: "unknown"
+  unknownFreshnessMaySupportImportantClaim: false
+  staleRowsEnterWinnerSet: false
+  freshnessIsTieBreakerOnly: true
+
+evaluation:
+  rubricRef: "replace-with-project-rubric-path"
+  goldQueryRef: "replace-with-project-gold-query-path"
+  preregisterBeforeRun: true
+  recordBaselineBeforePrototype: true
+  noSelfScoredC4Uplift: true
+
+rollback:
+  triggerVerdicts:
+    - "FAIL"
+  triggerConditions:
+    - "security or scope leakage"
+    - "candidate treated as verified"
+    - "literal exact recall below baseline"
+    - "stale or authority-scope error worse than baseline"
+    - "required direct-read rate below 100 percent"
+    - "source cap violation"
+    - "derived index cannot be rebuilt"
+  steps:
+    - "disable the fusion or adapter route"
+    - "remove the derived pilot index or cache"
+    - "continue exact search, qmd, Graphify, and direct reads"
+    - "preserve canonical Markdown and original sources"
+    - "record the failure and Learn Back"
+  neverRollbackBy:
+    - "moving canonical Markdown"
+    - "overwriting original sources"
+    - "deleting evidence needed for failure analysis"
+
+approval:
+  p0SchemaReadbackRequired: true
+  p0RubricReadbackRequired: true
+  p1MayStart: false
+  p1StartGate: "Set true only in a versioned project copy after all P0 artifacts parse and the P0 readback is PASS."
