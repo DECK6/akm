@@ -15,6 +15,8 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 - `evidence-row.schema.json` — JSON Schema 2020-12 companion for EvidenceRow and EvidencePacket
 - [[TASK-CONTRACT-SCHEMA]] — bounded artifact-work contract, readback requirements, runtime limit, and dispatch gate
 - `task-contract.schema.json` — JSON Schema 2020-12 companion for task contracts
+- [[MEMORY-RUNTIME]] — scoped local memory lifecycle, durable fences, bounded context packs, and rebuild contract
+- `memory-record.schema.json` — JSON Schema 2020-12 companion for durable runtime memory records
 - [[ENFORCEMENT]] — read-only instruction, task-contract, routing-failure, and prompt-asset lint modes
 - [[EXTERNAL-ASSETS]] — keep large binaries outside the text vault while preserving relative-path traceability
 - [[MIGRATION]] — phased consolidation guide for adopting an existing Markdown or Obsidian vault
@@ -46,7 +48,7 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 
 ## 50-procedures
 
-(empty)
+- [AKM memory runtime playbook](../adapters/hermes/memory/PLAYBOOK.md) — operate candidate review, scoped recall, guarded forget, rebuild, doctor, and reconciliation
 
 ## 60-actions
 
@@ -54,7 +56,7 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 
 ## 70-evaluation
 
-(empty)
+- [AKM memory runtime evaluation](../adapters/hermes/memory/EVALUATION.md) — conformance, adversarial safety, shadow metrics, and global-injection HOLD gates
 
 ## 80-outputs
 
@@ -69,6 +71,7 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 - [custom](../adapters/custom/README.md) — write an adapter for any agent
 - [aside](../adapters/aside/README.md) — Aside instructions + native-memory pointer division
 - [hermes](../adapters/hermes/README.md) — multi-profile session instructions + shared AKM pointer division
+- [hermes memory runtime](../adapters/hermes/memory/README.md) — optional local scoped-memory adapter, CLI, tests, and external runtime-root boundary
 
 ## examples
 
