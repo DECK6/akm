@@ -1,0 +1,284 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/DECK6/akm/blob/main/99-system/memory-record.schema.json",
+  "$comment": "Independent AKM schema adapting selected memory lifecycle concepts from gbrain commit 1ec6a6e842a15f2bde2ebe8c3a686a6fa6b17aa5; no gbrain code, service, database, or runtime data is included.",
+  "title": "AKM local memory record",
+  "description": "A scoped runtime record whose durable Markdown form remains subordinate to its cited AKM/original source and from which disposable derived state can be rebuilt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "state",
+    "revision",
+    "text",
+    "safe_summary",
+    "kind",
+    "entity",
+    "scope",
+    "visibility",
+    "egress_allowed",
+    "stable_authority",
+    "source",
+    "created_at",
+    "modified_at",
+    "expires_at",
+    "supersedes",
+    "superseded_by",
+    "decision_evidence",
+    "history"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^mem_[a-z0-9_-]{3,80}$"
+    },
+    "state": {
+      "enum": [
+        "candidate",
+        "active",
+        "superseded",
+        "expired",
+        "forgotten",
+        "rejected"
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "safe_summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "kind": {
+      "enum": [
+        "fact",
+        "event",
+        "preference",
+        "safety",
+        "commitment",
+        "belief",
+        "procedure"
+      ]
+    },
+    "entity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "visibility": {
+      "enum": [
+        "public",
+        "non_sensitive",
+        "private",
+        "restricted"
+      ]
+    },
+    "egress_allowed": {
+      "type": "boolean"
+    },
+    "stable_authority": {
+      "type": "boolean"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "lineage"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lineage": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "created_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "modified_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "forgotten_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "supersedes": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^mem_[a-z0-9_-]{3,80}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "superseded_by": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^mem_[a-z0-9_-]{3,80}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "decision_evidence": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "history": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/history_event"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "stable_authority": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "preference",
+              "safety"
+            ]
+          },
+          "expires_at": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "project",
+        "profile",
+        "user"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "profile": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "user": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      }
+    },
+    "history_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "change",
+        "at",
+        "evidence"
+      ],
+      "properties": {
+        "change": {
+          "enum": [
+            "created",
+            "modified",
+            "superseded",
+            "expired",
+            "forgotten"
+          ]
+        },
+        "at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string"
+        },
+        "related_record_id": {
+          "type": "string",
+          "pattern": "^mem_[a-z0-9_-]{3,80}$"
+        }
+      }
+    }
+  }
+}

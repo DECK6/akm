@@ -21,3 +21,4 @@ Append-only change history. Format: `YYYY-MM-DD | change | note`
 - 2026-07-10 | Nara Finder–proposal-mcp subscription integration logged | recorded Claude/Codex CLI MCP setup, Nemotron persona targeting, event success/failure analysis, and copy-reaction validation
 - 2026-07-10 | Local instance notes migrated out of Dev AKM core | moved 12 classified notes plus 2 maintainer mapping notes to `/Volumes/data/Obsidian/akm`; retained only reusable core system, tests, and adapters in Dev
 - 2026-07-24 | Production-proven evidence and execution controls promoted to core v0.3 | added portable EvidenceRow/EvidencePacket and bounded task-contract schemas, four read-only enforcement modes, operational-document budgets, routing-failure handoff, tests, and CI coverage while excluding live-instance device, backup, private-repository, fixed-memory, and HOLD retrieval-adapter policy
+- 2026-08-13 | Reusable local memory runtime framework added | [[MEMORY-RUNTIME]]

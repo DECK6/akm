@@ -42,6 +42,10 @@ Hermes runs several profiles against one machine. AKM is a **single shared insta
 - Semantic search across AKM markdown: reuse an existing local search engine (e.g. `qmd`) and add the AKM root as a collection.
 - Explicit link/tag traversal: any doc-graph tool that parses `[[wikilinks]]` + frontmatter works on AKM as-is.
 
+## Optional local memory runtime
+
+For explicit candidate review, exact scope isolation, reversible forget fences, bounded context packs, and rebuildable derived state, see [`adapters/hermes/memory/`](memory/README.md). The adapter requires an operator-supplied runtime root outside the AKM repository and keeps global prompt injection on `HOLD` by default.
+
 ## Safety
 
 AKM `99-system/SECURITY.md` runs **before** ROUTER. It matches Hermes' own rule: never store secret values, store their names/locations instead. Layer folders are gitignored and never leave the machine.
