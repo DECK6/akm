@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import re
+import tempfile
 
 LAYERS = {
     'sources': ('10-sources', '원문·출처 보존'),
@@ -109,15 +110,65 @@ def build(profile):
     return {'folders': folders, 'files': files, 'state_path': state_path}
 
 
+def add_domain(profile, root, write=False):
+    """Add a scoped scaffold to a generated workspace; never rewrite global policy."""
+    validate(profile)
+    root = root.resolve(strict=True)
+    global_profile = root/'99-system/PROFILE.json'
+    if not global_profile.resolve().is_relative_to(root):
+        raise ValueError('Existing profile escapes workspace')
+    if not global_profile.is_file():
+        raise ValueError('Map custom workspaces with akm-structure; no generated PROFILE.json found')
+    base = validate(json.loads(global_profile.read_text(encoding='utf-8')))
+    if set(profile['layers']) - set(base['layers']) or profile['inbox'] != base['inbox']:
+        raise ValueError('New domain cannot change global layers/inbox; use a structure migration')
+    parent = root/'99-system/domains'
+    destination = parent/profile['domain_id']
+    if not parent.resolve().is_relative_to(root) or destination.exists() or destination.is_symlink():
+        raise ValueError('Existing or unsafe domain preserved')
+    prefix = f'99-system/domains/{profile["domain_id"]}'
+    plan = build(profile)
+    state = json.loads(plan['files'][plan['state_path']])
+    old_brief = state['paths']['brief']
+    state['paths'].update(brief=f'{prefix}/domain-brief.md', profile=f'{prefix}/PROFILE.json')
+    files = {'PROFILE.json': json.dumps(profile, ensure_ascii=False, indent=2)+'\n',
+             'domain-brief.md': plan['files'][old_brief],
+             'sources.md': plan['files'][state['paths']['sources']],
+             'akm-state.json': json.dumps(state, ensure_ascii=False, indent=2)+'\n'}
+    result = {'domain_id': profile['domain_id'], 'files': [f'{prefix}/{p}' for p in files],
+              'content_status': 'structure-only', 'next_action': 'Register domain in the existing INDEX, then transfer discovery evidence'}
+    if write:
+        parent.mkdir(parents=True, exist_ok=True)
+        # Retain a complete pre-publication stage for recovery. Exclusive mkdir
+        # and file creation also preserve a directory appearing concurrently.
+        stage = Path(tempfile.mkdtemp(prefix='.akm-domain-', dir=parent))
+        for name, content in files.items():
+            (stage/name).write_text(content, encoding='utf-8')
+        try:
+            destination.mkdir(exist_ok=False)
+            for name, content in files.items():
+                with (destination/name).open('x', encoding='utf-8') as handle:
+                    handle.write(content)
+        except OSError as error:
+            raise ValueError(f'Domain creation interrupted; inspect destination and recovery stage {stage}: {error}') from error
+        result['created'] = str(destination)
+        result['recovery_stage'] = str(stage)
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['plan', 'init'])
+    parser.add_argument('command', choices=['plan', 'init', 'domain-plan', 'domain-init'])
     parser.add_argument('--profile', type=Path, required=True)
     parser.add_argument('--root', type=Path, required=True)
     args = parser.parse_args()
     try:
-        plan = build(json.loads(args.profile.read_text(encoding='utf-8')))
+        profile = json.loads(args.profile.read_text(encoding='utf-8'))
         root = args.root.expanduser().absolute()
+        if args.command.startswith('domain-'):
+            print(json.dumps(add_domain(profile, root, args.command == 'domain-init'), ensure_ascii=True, indent=2))
+            return
+        plan = build(profile)
         if args.command == 'plan':
             print(json.dumps({'root': str(root), 'folders': plan['folders'],
                               'files': sorted(plan['files'])}, ensure_ascii=True, indent=2))

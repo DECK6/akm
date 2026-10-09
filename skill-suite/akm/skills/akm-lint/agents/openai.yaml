@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Lint"
+  short_description: "온톨로지·위키의 구조와 질문 커버리지, 변경 영향을 검사합니다."
+  default_prompt: "$akm-lint 내 온톨로지와 위키의 연결·근거·질문 커버리지를 검사해줘."

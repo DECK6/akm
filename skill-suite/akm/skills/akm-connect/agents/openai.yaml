@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Connect"
+  short_description: "위키와 온톨로지의 빠진 연결을 근거에 따라 함께 보완합니다."
+  default_prompt: "$akm-connect 고립된 노트와 빠진 의미 연결을 찾아 근거가 있는 연결을 보완해줘."

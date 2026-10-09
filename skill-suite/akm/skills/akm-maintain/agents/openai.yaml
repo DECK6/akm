@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Maintain"
+  short_description: "정해진 범위에서 탐색·확장·연결·검증을 실행하고 이어갑니다."
+  default_prompt: "$akm-maintain 기존 도메인의 지식을 한 사이클 동안 알아서 확장하고 검증해줘."

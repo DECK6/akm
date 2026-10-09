@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Explore"
+  short_description: "미답변 질문과 반례를 조사하고 기존 지식의 근거 빈틈을 탐색합니다."
+  default_prompt: "$akm-explore 내 지식에서 다음에 조사할 빈틈을 찾아 실제 근거를 탐색해줘."

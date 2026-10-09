@@ -1,0 +1,280 @@
+{
+  "version": 1,
+  "domain_id": "reading-club",
+  "revision": 1,
+  "model_path": "ontology.md",
+  "artifacts": {
+    "raw/club-rules.md": "92944323c0523ef569b873969ad8535c41fadc52a2c65a46a06f6ebfa4a122c9",
+    "ontology.md": "b365fafd0f3dd7e634a7e338bbafa8bc481d10f35f992bd7b9c7c87bd8467274",
+    "index.md": "505819613a195cc32a1f78d5393a9e8913d10cb433446283b158426f73f9dd80",
+    "wiki/book.md": "59ff603cb1f9c0c8773d74b2f04110a314c7cee37847bc7bac5ced23d610845c",
+    "wiki/date.md": "c7e0019bcbb4345de8a0ebd407ec0da115b1bb70b70200073c8a0aa32c70d09f",
+    "wiki/summary.md": "457346a6227f1bac0544bc288bb91f2ae728d805f972481f1d6844e1ce979f8c",
+    "validation.md": "a7cfe12a4661fd4a4f2d791a595e813c5db2c519f98beec92579ecc77375882c"
+  },
+  "types": [
+    {
+      "id": "T-role"
+    },
+    {
+      "id": "T-task"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "C1",
+      "definition": "발표자",
+      "type_ids": [
+        "T-role"
+      ]
+    },
+    {
+      "id": "C2",
+      "definition": "책 제안",
+      "type_ids": [
+        "T-task"
+      ]
+    },
+    {
+      "id": "C3",
+      "definition": "진행자",
+      "type_ids": [
+        "T-role"
+      ]
+    },
+    {
+      "id": "C4",
+      "definition": "날짜 결정",
+      "type_ids": [
+        "T-task"
+      ]
+    },
+    {
+      "id": "C5",
+      "definition": "기록자",
+      "type_ids": [
+        "T-role"
+      ]
+    },
+    {
+      "id": "C6",
+      "definition": "요약 작성",
+      "type_ids": [
+        "T-task"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "id": "R1",
+      "definition": "해당 기수에서 역할이 수행할 책임",
+      "domain_types": [
+        "T-role"
+      ],
+      "range_types": [
+        "T-task"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "A1",
+      "subject": "C1",
+      "predicate": "R1",
+      "object": "C2",
+      "conditions": "가상 독서모임 1기에만 적용",
+      "status": "current",
+      "basis": "source-supported",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "locator": "1번 규칙"
+        }
+      ]
+    },
+    {
+      "id": "A2",
+      "subject": "C3",
+      "predicate": "R1",
+      "object": "C4",
+      "conditions": "가상 독서모임 1기에만 적용",
+      "status": "current",
+      "basis": "source-supported",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "locator": "2번 규칙"
+        }
+      ]
+    },
+    {
+      "id": "A3",
+      "subject": "C5",
+      "predicate": "R1",
+      "object": "C6",
+      "conditions": "가상 독서모임 1기에만 적용",
+      "status": "current",
+      "basis": "source-supported",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "locator": "3번 규칙"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "id": "N1",
+      "path": "wiki/book.md",
+      "status": "current",
+      "question_ids": [
+        "Q1"
+      ],
+      "concept_ids": [
+        "C1",
+        "C2"
+      ],
+      "claim_ids": [
+        "A1"
+      ],
+      "source_ids": [
+        "S1"
+      ],
+      "links": [
+        "N2"
+      ]
+    },
+    {
+      "id": "N2",
+      "path": "wiki/date.md",
+      "status": "current",
+      "question_ids": [
+        "Q2"
+      ],
+      "concept_ids": [
+        "C3",
+        "C4"
+      ],
+      "claim_ids": [
+        "A2"
+      ],
+      "source_ids": [
+        "S1"
+      ],
+      "links": [
+        "N3"
+      ]
+    },
+    {
+      "id": "N3",
+      "path": "wiki/summary.md",
+      "status": "current",
+      "question_ids": [
+        "Q3"
+      ],
+      "concept_ids": [
+        "C5",
+        "C6"
+      ],
+      "claim_ids": [
+        "A3"
+      ],
+      "source_ids": [
+        "S1"
+      ],
+      "links": [
+        "N1"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "1기에서 누가 책 제안을 맡는가?",
+      "status": "answered"
+    },
+    {
+      "id": "Q2",
+      "text": "1기에서 누가 날짜 결정을 맡는가?",
+      "status": "answered"
+    },
+    {
+      "id": "Q3",
+      "text": "1기에서 누가 요약 작성을 맡는가?",
+      "status": "answered"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "path": "raw/club-rules.md",
+      "read": true
+    }
+  ],
+  "checks": [
+    {
+      "question_id": "Q1",
+      "case": "normal",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q1",
+      "case": "counterexample",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q1",
+      "case": "unknown",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q2",
+      "case": "normal",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q2",
+      "case": "counterexample",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q2",
+      "case": "unknown",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q3",
+      "case": "normal",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q3",
+      "case": "counterexample",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    },
+    {
+      "question_id": "Q3",
+      "case": "unknown",
+      "result": "pass",
+      "revision": 1,
+      "path": "validation.md"
+    }
+  ]
+}

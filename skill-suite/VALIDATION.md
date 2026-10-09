@@ -2,6 +2,26 @@
 
 This release was checked as a portable local skill suite. Behavioral exercises used synthetic users and domains; they are not real-user research, a guarantee of factual accuracy, or cross-model benchmarks.
 
+## 0.2.0 — operation after setup
+
+| Check | Observed result |
+|---|---|
+| Python tool tests | 30 passed, including linked-map integrity, evidence/type/path failures, read-only coverage/frontier/impact, stale artifacts, empty knowledge, code-literal links and additive domain setup |
+| Core regression | Existing 18 Node tests passed; core behavior and pinned upstream assets retained |
+| Package and installation | 15 skills and plugin manifest validated; four new roles installed alongside the existing 11; all installed skill links and bodies read back |
+| Usable example | Fictional reading club: 3 actual notes, model, source, 3 questions and 9 authored checks; CLI coverage runs from the documented command |
+| Independent operational execution | A fresh agent used the entry skill to incorporate a supplied cohort-2 rule into existing cohort-1 knowledge, preserving original source and IDs, adding justified links, updating model/prose, answering 7 questions with 21 recorded cases and saving a 3-task checkpoint |
+| Actual resume | A separately requested one-task cycle with no new source returned no-change; 12 knowledge files, all knowledge IDs and revision 2 stayed unchanged, with only execution state updated |
+| Independent audit execution | 78 input variations across four CLI commands; 633 total pre/post-fix calls, no traceback or input mutation. Empty-artifact false completeness, bool/float version acceptance and inline-code link false positives were reproduced and fixed, then rerun on the preserved cases |
+| Semantic boundary | Separate direct reading blocked contradictory prose, wrong source locators, body/map divergence and an unregistered question even when the projection itself passed |
+| Documentation | 114 authored local Markdown references resolved during the release check |
+
+The operational evaluator wrote and reviewed its own synthetic update; its 21 cases are recorded behavior, not an independent factual benchmark. The audit evaluator used black-box input mutations without reading implementation or repository tests, and preserved both CLI revisions and outputs. The parent inspected reports, source text, resulting model/prose and current CLI hash.
+
+The CLI validates a declared projection, not every file in a vault or every semantic constraint. RDF/OWL reasoning, external-source truth/freshness, host-wide automatic skill discovery, scheduled unattended execution and native Windows remain outside this validation. A maintenance skill runs through the current agent; no background service is implicitly installed.
+
+## 0.1.0 — initial construction and publication (historical)
+
 | Check | Observed result |
 |---|---|
 | Python unit tests | 14 passed: additive/idempotent installation, collision preservation including dangling links, selected-layer generation, existing-root protection, invalid profiles, read-only plans, generated context schema, local references, pinned upstream hashes, and UTF-8 profiles/Unicode paths under an ASCII locale |

@@ -1,6 +1,6 @@
 {
   "name": "akm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Domain-adapted agent knowledge management: discovery, personalized AKM structure, ontology, LLM wiki and continuous knowledge operations.",
   "author": {
     "name": "AKM"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "AKM",
     "shortDescription": "도메인 인터뷰로 구축하고 운영하는 에이전트 지식관리",
-    "longDescription": "사용자별 AKM 구조·온톨로지·LLM 위키를 설계하고 자료 통합·질의·검수·확장·학습·맥락 인계를 연결합니다.",
+    "longDescription": "도메인별 시작 인터뷰와 맞춤 구조부터 온톨로지·LLM 위키의 탐색·확장·연결·린트·완결성 검수·지속 운영까지 연결합니다.",
     "developerName": "AKM",
     "category": "Productivity",
     "capabilities": [],

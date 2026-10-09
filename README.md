@@ -2,7 +2,7 @@
 
 A domain-adapted knowledge management skill suite and a portable Markdown core for AI agents. Start with a deep interview, choose the structure you need, and build an ontology and LLM wiki that share definitions, claims, sources, and updates. No database or server is required.
 
-The [AKM skill suite](skill-suite/README.md) provides 11 roles for discovery, structure, ontology, wiki, ingestion, query, review, growth, learning, and context handoff. The existing Markdown core below remains available for **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files.
+The [AKM skill suite](skill-suite/README.md) provides one entry point and 14 specialized roles for discovery, structure, ontology, wiki, ingestion, query, exploration, growth, connection repair, lint, review, maintenance, learning, and context handoff. The existing Markdown core below remains available for **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files.
 
 ## Start with your domain
 
@@ -12,11 +12,13 @@ cd akm
 python3 skill-suite/akm/scripts/install.py
 ```
 
-Python 3 installs all 11 skills as links in `CODEX_HOME/skills` (or `~/.codex/skills`). Keep this clone in place; the installer preserves existing conflicting skills and supports `--dest` for a different destination. See the [installation guide](skill-suite/README.md#로컬-설치) for the plugin source and other agent environments.
+Python 3.10+ installs all 15 skills as links in `CODEX_HOME/skills` (or `~/.codex/skills`). Keep this clone in place; the installer preserves existing conflicting skills and supports `--dest` for a different destination. See the [installation guide](skill-suite/README.md#로컬-설치) for the plugin source and other agent environments.
 
 Ask **“akm 구축 시작해줘”**, **“온톨로지 구축 시작해줘”**, or **“llm wiki 구축 시작해줘”**. Equivalent English requests such as “build my ontology” also enter the discovery interview. The skill instructions use connected question groups and follow the user's examples until they signal that nothing more comes to mind or ask to proceed, pause, or skip. Automatic skill selection depends on the host; `$akm` and `$akm-discover` are explicit entry points.
 
 The interview determines whether you need an inbox, how deep the knowledge layer should be, and which operating layers to include. Ontology and wiki share stable IDs and evidence: a changed rule updates the model, relevant explanations, examples, and answers together. The first wiki contains three substantive notes; later work expands or corrects existing knowledge as needed. See the [shared knowledge contract](skill-suite/akm/skills/akm/references/linked-knowledge.md) and [research foundations](skill-suite/akm/skills/akm/references/research-foundations.md).
+
+After setup, ask `$akm` to research a gap, incorporate a source, repair missing connections, check completeness, add another domain, or maintain the knowledge autonomously within a finite scope and budget. Maintenance executes the needed roles and preserves checkpoints; installing skills does not start a background scheduler. The [lifecycle contract](skill-suite/akm/skills/akm/references/lifecycle.md) and [read-only audit CLI](skill-suite/akm/skills/akm/references/audit-map.md) connect ontology constraints, wiki evidence, question coverage and change impact. Completeness is relative to declared questions and recorded checks, with semantic review reported separately.
 
 > An LLM wiki gives an agent a *map* of knowledge. AKM gives it an *operating system* for knowledge: what to learn, where to store it, how to act on it, how to verify results, and where failures go so the next run is better.
 
@@ -168,7 +170,7 @@ Keep large binaries outside the text vault and mirror their AKM-relative paths u
 ```text
 akm/
 ├── README.md
-├── skill-suite/        # 11 skills, portable plugin source, installer and tests
+├── skill-suite/        # 15 skills, linked knowledge audit, example, installer and tests
 ├── 00-inbox/           # intake staging — new material lands here first,
 │                       # classified out via ROUTER within 7 days
 ├── 99-system/          # SCHEMA (frontmatter standard), ROUTER (classification),

@@ -1,4 +1,4 @@
 interface:
   display_name: "AKM — 에이전트 지식관리 스킬 묶음"
-  short_description: "내 도메인에 맞는 에이전트 지식관리 스킬 묶음을 시작합니다"
+  short_description: "내 분야의 위키·온톨로지를 구축하고 탐색·확장·검증하며 운영합니다"
   default_prompt: "$akm 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

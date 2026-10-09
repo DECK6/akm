@@ -64,8 +64,9 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 
 ## Skill suite
 
-- [AKM skills](../skill-suite/README.md) — discovery, personalized structure, connected ontology/wiki, and ongoing knowledge operations
+- [AKM skills](../skill-suite/README.md) — discovery, personalized structure, connected ontology/wiki, exploration, repair and bounded maintenance
 - [Research foundations](../skill-suite/akm/skills/akm/references/research-foundations.md) — research-to-workflow mapping and scope
+- [Lifecycle and audits](../skill-suite/akm/skills/akm/references/lifecycle.md) — operation policy, checkpoints, declared-question completeness and role handoffs
 
 ## adapters
 

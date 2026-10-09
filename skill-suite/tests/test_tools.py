@@ -161,6 +161,35 @@ class WorkspaceTests(unittest.TestCase):
         self.assertFalse(root.exists())
         self.assertEqual(plan['folders'], ['20-knowledge','99-system'])
 
+    def test_add_domain_preserves_global_profile_and_prior_domain(self):
+        root = scratch()/'workspace'
+        self.assertEqual(self.run_profile(self.profile(), root).returncode, 0)
+        before = {p: p.read_bytes() for p in root.rglob('*') if p.is_file()}
+        profile = self.profile(domain_id='workshop', domain='공방 운영', purpose='도구 사용 조건을 정리한다')
+        planned = self.run_profile(profile, root, 'domain-plan')
+        self.assertEqual(planned.returncode, 0, planned.stderr)
+        self.assertFalse((root/'99-system/domains/workshop').exists())
+        result = self.run_profile(profile, root, 'domain-init')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for path, content in before.items():
+            self.assertEqual(path.read_bytes(), content)
+        state = json.loads((root/'99-system/domains/workshop/akm-state.json').read_text())
+        self.assertEqual(state['domain_id'], 'workshop')
+        self.assertTrue((root/state['paths']['profile']).is_file())
+        self.assertTrue((root/state['paths']['brief']).is_file())
+        repeated = self.run_profile(profile, root, 'domain-init')
+        self.assertNotEqual(repeated.returncode, 0)
+
+    def test_domain_init_refuses_new_layers_and_symlink_escape(self):
+        root = scratch()/'workspace'
+        self.assertEqual(self.run_profile(self.profile(), root).returncode, 0)
+        extra = self.profile(domain_id='next', layers=['knowledge','context'])
+        self.assertNotEqual(self.run_profile(extra, root, 'domain-init').returncode, 0)
+        outside = scratch()
+        (root/'99-system/domains/escape').symlink_to(outside, target_is_directory=True)
+        self.assertNotEqual(self.run_profile(self.profile(domain_id='escape'), root, 'domain-init').returncode, 0)
+        self.assertEqual(list(outside.iterdir()), [])
+
 
 class PackageTests(unittest.TestCase):
     def test_public_core_snapshot_matches_pinned_hashes(self):
