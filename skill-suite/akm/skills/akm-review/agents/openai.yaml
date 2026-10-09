@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Review — 지식 시스템 검수"
+  short_description: "분류·관계·위키의 근거와 실제 활용 품질을 검수합니다"
+  default_prompt: "$akm-review 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

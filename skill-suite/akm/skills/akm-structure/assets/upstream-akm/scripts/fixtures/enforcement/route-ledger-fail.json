@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "entries": [
+    {
+      "eventId": "route-fixture-unverified-close",
+      "observedAt": "2026-07-19T12:00:00+09:00",
+      "taskId": "t_fixture_route",
+      "expectedRoute": "artifact-writer",
+      "actualRoute": "read-only-auditor",
+      "failureType": "misroute",
+      "evidence": ["task:t_fixture_route", "artifact-count:0"],
+      "privacy": "metadata-only",
+      "status": "closed"
+    }
+  ]
+}

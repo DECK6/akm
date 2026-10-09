@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Discover — 도메인 발견실"
+  short_description: "분야별 질문 묶음으로 경험과 암묵지를 깊이 탐색합니다"
+  default_prompt: "$akm-discover 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

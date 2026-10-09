@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Wiki — 지식을 설명으로 엮기"
+  short_description: "질문과 온톨로지로 첫 위키 3편을 만들고 보강합니다"
+  default_prompt: "$akm-wiki 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

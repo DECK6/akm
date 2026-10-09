@@ -18,3 +18,11 @@ jobs:
       - run: node scripts/lint.mjs --okf-export examples/okf-export
       - run: node scripts/lint.mjs --links examples/okf-export
       - run: node scripts/lint.mjs --secrets
+  skill-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest discover -s skill-suite/tests -v

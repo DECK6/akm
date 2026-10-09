@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Context — 맥락 저장과 재개"
+  short_description: "필요한 근거와 상태를 저장해 다음 작업을 이어갑니다"
+  default_prompt: "$akm-context 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

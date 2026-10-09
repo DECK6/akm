@@ -1,0 +1,24 @@
+# AKM-LOG
+
+Append-only change history. Format: `YYYY-MM-DD | change | note`
+
+- 2026-06-12 | Phase 1: 7-layer folder scaffold created | per PLAN.md
+- 2026-06-12 | SCHEMA, ROUTER, GLOSSARY, INDEX, LOG written | Phase 1 done
+- 2026-06-12 | LOOP (7 steps + Learn Back mapping), 7 templates written | Phase 2 done
+- 2026-06-12 | Adapter spec + claude-code/codex/openclaw adapters + maintainer's personal agent adapter | Phase 3 done, OpenClaw integration decided (MEMORY.md division)
+- 2026-06-12 | Maintainer asset mapping tables written (local-only) | Phase 4 done, vault relationship decided (independent AKM + pointers)
+- 2026-06-12 | Dogfooding: 2 sources ingested, concept/comparison compiled, project context linked | Phase 5-1 done
+- 2026-06-12 | User preference (bun) stored as context body + memory pointer, yt2md procedure stored as skill | ROUTER Q4/Q3 routing
+- 2026-06-12 | Adapter blind test passed (3/3 correct routing), 5 ambiguities fixed in SCHEMA/ROUTER/snippets | Phase 5 done, first Learn Back
+- 2026-06-12 | System translated to English, README/README.ko/LICENSE/.gitignore added, root CLAUDE.md+AGENTS.md, custom adapter guide | public distribution prep
+- 2026-06-12 | Three-stores model (Memory/Brain/Vault) formalized as loading view over the seven layers | README, README.ko, GLOSSARY
+- 2026-06-12 | Hermes install point corrected: per-profile SOUL.md (session-loaded), nothing installed in brain | brain-pointer approach deprecated as a layer violation
+- 2026-06-12 | scripts/lint.mjs (schema/index/wikilink/secret validator), 4 new templates (rubric, verification, run, handoff), SECURITY.md + ROUTER pre-check, adapter compliance checklist | hardening pass
+- 2026-06-15 | OKF compatibility layer added: OKF-COMPAT, MANIFEST, export/index scripts, lint modes, citations template convention, sample AKM fixture and OKF export | AKM core kept strict; OKF handled as export target
+- 2026-07-10 | Production-instance hardening promoted to core v0.2 | expanded live enums, allowed opaque source/output Markdown, improved folder-level index coverage, ignored generated vault state, documented phased vault migration/external assets, added claim-ledger template and lint regression tests
+- 2026-07-10 | DEER-informed verification promoted from the live instance | added core Tier 0–3 verification standard, seven quality dimensions, task guidance packets, key-claim checks, verdicts and Learn Back routing; wired LOOP and verification templates without publishing instance-only workers or notes
+- 2026-07-10 | MCST AI·data contest presentation drafted and Tier 3 verified | added local MICE safety presentation Markdown with Nemotron persona QA demo, claim ledger, and submission caveats
+- 2026-07-10 | Nara Finder–proposal-mcp subscription integration logged | recorded Claude/Codex CLI MCP setup, Nemotron persona targeting, event success/failure analysis, and copy-reaction validation
+- 2026-07-10 | Local instance notes migrated out of Dev AKM core | moved 12 classified notes plus 2 maintainer mapping notes to `/Volumes/data/Obsidian/akm`; retained only reusable core system, tests, and adapters in Dev
+- 2026-07-24 | Production-proven evidence and execution controls promoted to core v0.3 | added portable EvidenceRow/EvidencePacket and bounded task-contract schemas, four read-only enforcement modes, operational-document budgets, routing-failure handoff, tests, and CI coverage while excluding live-instance device, backup, private-repository, fixed-memory, and HOLD retrieval-adapter policy
+- 2026-08-13 | Reusable local memory runtime framework added | [[MEMORY-RUNTIME]]

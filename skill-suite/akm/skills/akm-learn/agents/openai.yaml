@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Learn — 실행에서 다시 배우기"
+  short_description: "사용 결과와 실패를 지식·맥락·절차 교정으로 되돌립니다"
+  default_prompt: "$akm-learn 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

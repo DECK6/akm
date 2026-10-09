@@ -1,6 +1,22 @@
 # AKM — Agent Knowledge Management
 
-A universal, tool-agnostic knowledge system for AI agents. Plain Markdown, no database or server required. Works with **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files; optional zero-dependency scripts provide linting, operational enforcement, and export.
+A domain-adapted knowledge management skill suite and a portable Markdown core for AI agents. Start with a deep interview, choose the structure you need, and build an ontology and LLM wiki that share definitions, claims, sources, and updates. No database or server is required.
+
+The [AKM skill suite](skill-suite/README.md) provides 11 roles for discovery, structure, ontology, wiki, ingestion, query, review, growth, learning, and context handoff. The existing Markdown core below remains available for **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files.
+
+## Start with your domain
+
+```bash
+git clone https://github.com/DECK6/akm.git
+cd akm
+python3 skill-suite/akm/scripts/install.py
+```
+
+Python 3 installs all 11 skills as links in `CODEX_HOME/skills` (or `~/.codex/skills`). Keep this clone in place; the installer preserves existing conflicting skills and supports `--dest` for a different destination. See the [installation guide](skill-suite/README.md#로컬-설치) for the plugin source and other agent environments.
+
+Ask **“akm 구축 시작해줘”**, **“온톨로지 구축 시작해줘”**, or **“llm wiki 구축 시작해줘”**. Equivalent English requests such as “build my ontology” also enter the discovery interview. The skill instructions use connected question groups and follow the user's examples until they signal that nothing more comes to mind or ask to proceed, pause, or skip. Automatic skill selection depends on the host; `$akm` and `$akm-discover` are explicit entry points.
+
+The interview determines whether you need an inbox, how deep the knowledge layer should be, and which operating layers to include. Ontology and wiki share stable IDs and evidence: a changed rule updates the model, relevant explanations, examples, and answers together. The first wiki contains three substantive notes; later work expands or corrects existing knowledge as needed. See the [shared knowledge contract](skill-suite/akm/skills/akm/references/linked-knowledge.md) and [research foundations](skill-suite/akm/skills/akm/references/research-foundations.md).
 
 > An LLM wiki gives an agent a *map* of knowledge. AKM gives it an *operating system* for knowledge: what to learn, where to store it, how to act on it, how to verify results, and where failures go so the next run is better.
 
@@ -10,7 +26,9 @@ Agents forget. Plain RAG re-interprets the same documents every session, good sy
 
 The core idea is **separation of stores**. Long external knowledge, short operating rules, repeatable procedures, execution records, and verification criteria each fail differently when mixed. AKM stores them apart and reconnects them with wikilinks and frontmatter.
 
-## The seven layers
+## The core's seven layers
+
+These are the baseline storage roles. A new workspace built through the skill interview creates only the selected layers; source traceability and correction still apply when a dedicated folder is omitted. Existing workspaces keep their own INDEX, ROUTER, SCHEMA, and LOOP.
 
 | # | Layer | Folder | One-line rule |
 |---|-------|--------|---------------|
@@ -54,10 +72,11 @@ Accumulating knowledge without steps 5–7 is just a wiki. Executing without 6�
 
 Verification is risk-based: Tier 0 for low-risk one-offs, Tier 1 for durable notes, Tier 2 for deep reports, and Tier 3 for high-stakes work with a claim ledger. The seven-dimension standard is informed by the DEER benchmark and connects request fit, reasoning, structure, style, safety, evidence sufficiency, and evidence integrity to Learn Back. See [`99-system/VERIFICATION.md`](99-system/VERIFICATION.md).
 
-## Quick start
+## Use the Markdown core directly
 
 ```bash
-git clone https://github.com/<you>/akm.git
+git clone https://github.com/DECK6/akm.git
+cd akm
 ```
 
 **Zero setup**: run your agent *inside* the cloned folder — root [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md) are included, so Claude Code, Codex, and OpenClaw pick up the operating rules automatically.
@@ -116,6 +135,15 @@ node scripts/lint.mjs --routing-failure ./path/to/failure-note.md
 node scripts/lint.mjs --prompt-assets ./path/to/prompt-asset-manifest.json
 ```
 
+Repository tests use Node's built-in runner and Python's standard library:
+
+```bash
+node --test scripts/tests/*.test.mjs
+python3 -m unittest discover -s skill-suite/tests -v
+```
+
+The [skill validation record](skill-suite/VALIDATION.md) distinguishes automated checks, synthetic behavior exercises, and host integration limits. GitHub Actions runs both test suites.
+
 Schema violations and OKF conformance failures are errors (exit 1); link/index/secret findings are warnings. Managed AKM notes use the complete schema. Unmodified Markdown originals in `10-sources/` and opaque deliverables in `80-outputs/` may omit AKM frontmatter; if either uses an `akmLayer`, `akmType`, or `akmRole` field, the full schema applies. See [`99-system/SCHEMA.md`](99-system/SCHEMA.md).
 
 The script checks deterministic structure; it cannot decide whether an artifact answered the request or whether a cited source truly supports a claim. Tier 1+ verification adds those request-fit and claim-support checks through [`99-system/VERIFICATION.md`](99-system/VERIFICATION.md).
@@ -140,6 +168,7 @@ Keep large binaries outside the text vault and mirror their AKM-relative paths u
 ```text
 akm/
 ├── README.md
+├── skill-suite/        # 11 skills, portable plugin source, installer and tests
 ├── 00-inbox/           # intake staging — new material lands here first,
 │                       # classified out via ROUTER within 7 days
 ├── 99-system/          # SCHEMA (frontmatter standard), ROUTER (classification),
@@ -160,7 +189,7 @@ akm/
 └── scripts/            # lint/enforcement, OKF export, directory index generation
 ```
 
-The repo distributes the *system* (`99-system/`, `adapters/`, templates). What you store in the layers is *your instance* and is gitignored — clone once, use privately, pull system updates without conflicts.
+The repo distributes the skill suite and the Markdown core (`99-system/`, `adapters/`, templates). The suite includes a pinned, unchanged snapshot of the earlier public core as its structure module, with license and file hashes. What you store in the root instance layers is private and gitignored. Place separately generated personal workspaces outside this public checkout.
 
 ## Design principles
 
@@ -169,7 +198,7 @@ The repo distributes the *system* (`99-system/`, `adapters/`, templates). What y
 3. **Evaluation is not optional.** A failure is not an error to delete; it's a signal that must be routed back to the layer that caused it.
 4. **One body, everywhere else pointers.** Native agent memories (Claude Code auto-memory, OpenClaw `MEMORY.md`, a custom agent's brain) keep harness-specific pointers; shared rules live in AKM. Never duplicate content across stores.
 5. **No over-engineering.** Markdown + folders + frontmatter remain canonical. Optional validators may check declared contracts, but they never become the knowledge store.
-6. **Generic structure, domain-specific taxonomy.** The layers never change per domain; domains extend inside the Knowledge and Context layers.
+6. **Stable storage meanings, personalized scope.** The baseline roles keep their meanings; an interview chooses which dedicated layers are useful. Domain concepts and relationships belong in the connected ontology and wiki, not in folder names alone.
 
 ## Lineage
 

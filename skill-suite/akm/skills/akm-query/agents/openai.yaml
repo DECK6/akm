@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Query — 근거로 답하고 사용하기"
+  short_description: "위키와 온톨로지의 근거를 따라 질문에 답하고 활용합니다"
+  default_prompt: "$akm-query 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

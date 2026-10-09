@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "domain_id": "sample-domain",
+  "domain": "형식 설명용 가상 분야",
+  "purpose": "여러 자료의 개념을 비교하고 질문에 답하기",
+  "inbox": false,
+  "layers": ["knowledge"],
+  "knowledge_depth": "linked",
+  "operating_depth": "none",
+  "decisions": [
+    {"component": "inbox", "choice": false, "reason": "가상 예시: 읽을 때 바로 분류하고 미확인은 상태에 남긴다", "basis": "llm-proposed"},
+    {"component": "knowledge", "choice": "linked", "reason": "가상 예시: 개념의 차이와 관계를 비교한다", "basis": "llm-proposed"},
+    {"component": "operating", "choice": "none", "reason": "가상 예시: 에이전트에게 외부 실행을 맡기지 않는다", "basis": "llm-proposed"}
+  ],
+  "pending_questions": []
+}

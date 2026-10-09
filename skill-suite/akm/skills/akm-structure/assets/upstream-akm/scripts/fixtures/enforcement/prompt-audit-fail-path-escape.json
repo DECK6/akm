@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0.0",
+  "assets": [
+    {
+      "id": "escaped-readme",
+      "path": "../../../README.md",
+      "type": "AGENTS",
+      "owner": "maintainer",
+      "scope": {"kind": "project", "target": "akm"},
+      "appliesWhen": "working inside the AKM repository",
+      "precedenceRank": 30,
+      "overrides": [],
+      "mustNotOverride": [],
+      "conflictKey": "package-manager",
+      "directive": {"effect": "require", "value": "bun"}
+    }
+  ]
+}

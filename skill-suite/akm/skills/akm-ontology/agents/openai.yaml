@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Ontology — 의미와 관계 설계"
+  short_description: "도메인 개념과 관계의 의미·조건·근거를 설계합니다"
+  default_prompt: "$akm-ontology 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

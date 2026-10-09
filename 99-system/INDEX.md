@@ -62,6 +62,11 @@ Full note list with one-line summaries. Update this file whenever notes are adde
 
 (empty)
 
+## Skill suite
+
+- [AKM skills](../skill-suite/README.md) — discovery, personalized structure, connected ontology/wiki, and ongoing knowledge operations
+- [Research foundations](../skill-suite/akm/skills/akm/references/research-foundations.md) — research-to-workflow mapping and scope
+
 ## adapters
 
 - [README](../adapters/README.md) — adapter specification (four questions, native-memory division principle)

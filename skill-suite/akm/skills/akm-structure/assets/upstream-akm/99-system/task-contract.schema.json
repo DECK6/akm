@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://akm.cmdspace.work/schema/task-contract-1.0.0.json",
+  "title": "AKM Task Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "taskId",
+    "purpose",
+    "inputs",
+    "outputs",
+    "canonicalPath",
+    "format",
+    "sources",
+    "owner",
+    "failureHandling",
+    "completion",
+    "verification",
+    "runtime",
+    "nonGoals",
+    "securityExclusions",
+    "blockers"
+  ],
+  "properties": {
+    "contractVersion": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+    "taskId": {"type": "string", "minLength": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "required", "verify"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "verify": {"enum": ["exists", "http", "readback"]}
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind", "required"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "kind": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"}
+        }
+      }
+    },
+    "canonicalPath": {"type": "string", "minLength": 1},
+    "format": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref", "role"],
+        "properties": {
+          "ref": {"type": "string", "minLength": 1},
+          "role": {"enum": ["source-of-truth", "support", "authorial-synthesis"]}
+        }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "handoff"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "handoff": {"type": "string", "minLength": 1}
+      }
+    },
+    "failureHandling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blockedWhen", "holdWhen", "preserve"],
+      "properties": {
+        "blockedWhen": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "holdWhen": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "preserve": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "completion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "optional"],
+      "properties": {
+        "required": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "optional": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "expectedExit", "readback"],
+        "properties": {
+          "command": {"type": "string", "minLength": 1},
+          "expectedExit": {"type": "integer"},
+          "readback": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxSeconds", "goalMode"],
+      "properties": {
+        "maxSeconds": {"type": "integer", "minimum": 1, "maximum": 5400},
+        "goalMode": {"const": false}
+      }
+    },
+    "nonGoals": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "securityExclusions": {
+      "type": "array",
+      "minItems": 5,
+      "items": {"type": "string", "minLength": 1},
+      "allOf": [
+        {"contains": {"const": "auth"}},
+        {"contains": {"const": "token"}},
+        {"contains": {"const": "cookie"}},
+        {"contains": {"const": "session-db"}},
+        {"contains": {"const": "secret"}}
+      ]
+    },
+    "blockers": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

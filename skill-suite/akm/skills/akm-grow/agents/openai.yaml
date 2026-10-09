@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Grow — 질문을 따라 지식 확장"
+  short_description: "사용자의 다음 질문을 중심으로 지식을 보강하고 확장합니다"
+  default_prompt: "$akm-grow 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

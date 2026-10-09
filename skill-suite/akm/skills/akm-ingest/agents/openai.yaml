@@ -1,0 +1,4 @@
+interface:
+  display_name: "AKM Ingest — 자료를 지식으로 편입"
+  short_description: "자료의 출처를 보존하고 기존 지식에 연결해 편입합니다"
+  default_prompt: "$akm-ingest 내 도메인의 현재 요청에 맞춰 이 역할을 수행해줘."

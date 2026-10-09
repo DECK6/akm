@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "assets": [
+    {
+      "id": "project-agents",
+      "path": "instructions/AGENTS.md",
+      "type": "AGENTS",
+      "owner": "maintainer",
+      "scope": {"kind": "project", "target": "akm"},
+      "appliesWhen": "working inside the AKM repository",
+      "precedenceRank": 30,
+      "overrides": ["project-claude"],
+      "mustNotOverride": [],
+      "conflictKey": "package-manager",
+      "directive": {"effect": "require", "value": "bun"}
+    },
+    {
+      "id": "project-claude",
+      "path": "instructions/CLAUDE.md",
+      "type": "CLAUDE",
+      "owner": "maintainer",
+      "scope": {"kind": "project", "target": "akm"},
+      "appliesWhen": "Claude-compatible agents work inside AKM",
+      "precedenceRank": 40,
+      "overrides": [],
+      "mustNotOverride": [],
+      "conflictKey": "package-manager",
+      "directive": {"effect": "require", "value": "bun"}
+    },
+    {
+      "id": "profile-soul",
+      "path": "instructions/SOUL.md",
+      "type": "SOUL",
+      "owner": "operator",
+      "scope": {"kind": "profile", "target": "operator"},
+      "appliesWhen": "the operator profile is active",
+      "precedenceRank": 20,
+      "overrides": [],
+      "mustNotOverride": [],
+      "conflictKey": "master-tone",
+      "directive": {"effect": "require", "value": "clear neutral tone"}
+    },
+    {
+      "id": "browser-skill",
+      "path": "instructions/SKILL.md",
+      "type": "skill",
+      "owner": "operator",
+      "scope": {"kind": "skill", "target": "browser-qa"},
+      "appliesWhen": "browser QA is requested",
+      "precedenceRank": 50,
+      "overrides": [],
+      "mustNotOverride": [],
+      "conflictKey": "browser-driver",
+      "directive": {"effect": "require", "value": "approved browser driver"}
+    }
+  ]
+}
