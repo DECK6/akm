@@ -25,3 +25,5 @@ Append-only change history. Format: `YYYY-MM-DD | change | note`
 - 2026-10-09 | Added domain-adapted AKM skill suite with 11 roles, personalized layers, linked ontology/wiki, installer and Python CI | [Skill guide](../skill-suite/README.md)
 
 - 2026-10-09: Added AKM 0.2.0 lifecycle roles, linked ontology/wiki audits and coverage, bounded maintenance, and additive domain setup; validated post-bootstrap updates and preserved source boundaries. → [skill suite](../skill-suite/README.md)
+
+- 2026-10-10 | Reworked English/Korean READMEs and skill guide around the complete knowledge lifecycle, shared ontology/wiki, installation, updates, bounded maintenance, examples, and verification limits.

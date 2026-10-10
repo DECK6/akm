@@ -1,34 +1,127 @@
 # AKM — Agent Knowledge Management
 
-A domain-adapted knowledge management skill suite and a portable Markdown core for AI agents. Start with a deep interview, choose the structure you need, and build an ontology and LLM wiki that share definitions, claims, sources, and updates. No database or server is required.
+**Build and keep improving a knowledge system for your own domain: a connected ontology, an LLM wiki, and the structure to operate them.**
 
-The [AKM skill suite](skill-suite/README.md) provides one entry point and 14 specialized roles for discovery, structure, ontology, wiki, ingestion, query, exploration, growth, connection repair, lint, review, maintenance, learning, and context handoff. The existing Markdown core below remains available for **Claude Code**, **Codex**, **OpenClaw**, and any agent that can read files.
+Use one entry point, **`$akm`**, from the first interview through ongoing research, expansion, connection repair, validation, and resumption. AKM routes the work across 14 specialist roles. Markdown and source files stay yours; no database, server, paid API, or gstack installation is required.
 
-## Start with your domain
+[한국어](README.ko.md) · [Skill guide](skill-suite/README.md) · [All 15 skills](skill-suite/README.md#스킬-구성) · [Runnable example](skill-suite/examples/reading-club/index.md) · [Validation and limits](skill-suite/VALIDATION.md)
 
-```bash
+## What you build
+
+| Part | What it does |
+|---|---|
+| **AKM structure** | Chooses where sources, knowledge, context, procedures, and verification belong, based on how you work. An inbox and dedicated operating layers are optional. |
+| **Ontology** | Defines concepts, entity types, relationship meanings, applicable conditions, exceptions, and evidence. |
+| **LLM wiki** | Synthesizes readable explanations that answer your questions and point back to the same concepts, claims, and sources. |
+| **Ongoing operation** | Finds gaps, researches evidence, updates existing knowledge, adds justified connections, checks results, and saves the next step. |
+
+Ontology and wiki share stable IDs, definitions, claims, sources, and revisions. When a rule changes, the agent updates its model, affected explanations, examples, and answers together. Folder names alone do not define an ontology, and a link alone does not prove a relationship. See the [connected knowledge contract](skill-suite/akm/skills/akm/references/linked-knowledge.md).
+
+The domain comes from you: a research topic, a craft, an organization's work, a creative practice, or another field. Questions follow your actual examples and decisions. Existing knowledge spaces retain their structure and local rules.
+
+## Install once, start with your domain
+
+For Codex, with Python 3.10+:
+
+```sh
 git clone https://github.com/DECK6/akm.git
 cd akm
 python3 skill-suite/akm/scripts/install.py
 ```
 
-Python 3.10+ installs all 15 skills as links in `CODEX_HOME/skills` (or `~/.codex/skills`). Keep this clone in place; the installer preserves existing conflicting skills and supports `--dest` for a different destination. See the [installation guide](skill-suite/README.md#로컬-설치) for the plugin source and other agent environments.
+The installer links all 15 skills into `CODEX_HOME/skills` (or `~/.codex/skills`). Keep the clone in place. Re-running adds missing roles without replacing conflicting entries; `--dest` selects another skill directory. The [installation guide](skill-suite/README.md#로컬-설치) covers the plugin source and other agent environments. Automatic skill discovery depends on the host; `$akm` is the explicit entry point.
 
-Ask **“akm 구축 시작해줘”**, **“온톨로지 구축 시작해줘”**, or **“llm wiki 구축 시작해줘”**. Equivalent English requests such as “build my ontology” also enter the discovery interview. The skill instructions use connected question groups and follow the user's examples until they signal that nothing more comes to mind or ask to proceed, pause, or skip. Automatic skill selection depends on the host; `$akm` and `$akm-discover` are explicit entry points.
+Start with any of these:
 
-The interview determines whether you need an inbox, how deep the knowledge layer should be, and which operating layers to include. Ontology and wiki share stable IDs and evidence: a changed rule updates the model, relevant explanations, examples, and answers together. The first wiki contains three substantive notes; later work expands or corrects existing knowledge as needed. See the [shared knowledge contract](skill-suite/akm/skills/akm/references/linked-knowledge.md) and [research foundations](skill-suite/akm/skills/akm/references/research-foundations.md).
+> $akm Build a knowledge system for my field. Interview me about the questions, examples, and decisions that matter, then help me build the ontology and wiki.
 
-After setup, ask `$akm` to research a gap, incorporate a source, repair missing connections, check completeness, add another domain, or maintain the knowledge autonomously within a finite scope and budget. Maintenance executes the needed roles and preserves checkpoints; installing skills does not start a background scheduler. The [lifecycle contract](skill-suite/akm/skills/akm/references/lifecycle.md) and [read-only audit CLI](skill-suite/akm/skills/akm/references/audit-map.md) connect ontology constraints, wiki evidence, question coverage and change impact. Completeness is relative to declared questions and recorded checks, with semantic review reported separately.
+> akm 구축 시작해줘
+>
+> 온톨로지 구축 시작해줘
+>
+> llm wiki 구축 시작해줘
 
-> An LLM wiki gives an agent a *map* of knowledge. AKM gives it an *operating system* for knowledge: what to learn, where to store it, how to act on it, how to verify results, and where failures go so the next run is better.
+All three enter the same domain discovery interview. The agent asks related questions in groups, follows your answers into deeper questions, and continues until you say nothing more comes to mind or ask to proceed, pause, or skip. It uses the information already supplied.
 
-## Why
+The interview determines whether you need an inbox, the depth of your knowledge layer, and the operating layers you want. The first wiki contains **three substantive notes**, with a shared meaning model and source links. Later updates create or revise only what the questions require.
 
-Agents forget. Plain RAG re-interprets the same documents every session, good syntheses evaporate when the session ends, and the same mistakes repeat. Compiled Markdown wikis (e.g. Karpathy's LLM Wiki pattern) fix the *knowledge* half — but knowing is not operating. AKM keeps the wiki pattern as its knowledge layer and adds operational memory, context, procedures, selective action logging, and an evaluation loop, so agents don't just know more — they work better over time.
+To update an installation made from this clone:
 
-The core idea is **separation of stores**. Long external knowledge, short operating rules, repeatable procedures, execution records, and verification criteria each fail differently when mixed. AKM stores them apart and reconnects them with wikilinks and frontmatter.
+```sh
+git pull --ff-only
+python3 skill-suite/akm/scripts/install.py
+```
 
-## The core's seven layers
+## Keep using the same entry point
+
+You do not need to memorize role names. Ask `$akm` or use a natural-language request:
+
+| Your request | What the agent does |
+|---|---|
+| “Add this source to my knowledge.” | Preserves the source, compares its claims with existing knowledge, updates the model and wiki, then verifies affected answers. |
+| “What should I investigate next?” | Identifies unanswered questions, weak evidence, missing conditions, and counterexamples; recommends useful investigations. |
+| “Expand this domain for me.” | Runs research, ingestion, synthesis, connection repair, and checks within the delegated scope and budget. |
+| “Find and fill the missing connections.” | Inspects isolated notes and missing model mappings, adds evidence-backed relationships or useful navigation links, and checks their meaning. |
+| “Check how complete this knowledge is.” | Checks structure, evidence, declared questions, conditions, counterexamples, and unknowns; reports gaps and next actions. |
+| “Start another field in this workspace.” | Interviews for the new domain and adds its own brief, model, notes, and state while preserving existing domains. |
+| “Continue where we stopped.” | Reads the actual revision and unfinished tasks, resumes useful work, and avoids ingesting the same material again. |
+
+```mermaid
+flowchart LR
+    A[Domain interview] --> B[Structure + ontology + first wiki]
+    B --> C[Ask and use]
+    C --> D[Explore and ingest]
+    D --> E[Update model, notes and connections]
+    E --> F[Lint and review]
+    F --> C
+```
+
+The agent uses the roles needed for your request. A simple question remains a query; a delegated maintenance task proceeds through actual changes and verification. New evidence can strengthen an existing note, revise a condition, expose a conflict, or justify a new note. If nothing new is supported, **no change is a valid result**.
+
+### Give autonomous work a clear scope
+
+For example:
+
+> $akm Maintain my urban gardening knowledge. Use the sources already in this workspace, work through at most three useful tasks, repair missing connections, and check the updated answers. Save what remains for the next session.
+
+Maintenance records the domain, allowed sources and actions, task/source/time limits, current revision, outcomes, and next step. It stops when the scope is satisfied, a limit is reached, you stop it, or there is no supported progress to make. See the [lifecycle contract](skill-suite/akm/skills/akm/references/lifecycle.md).
+
+A skill runs through your current agent. Installing it does not start an unattended service. Recurring execution can be connected to a host scheduler when requested; the agent must verify registration before reporting it active.
+
+## Check the ontology and wiki together
+
+The suite separates **mechanical integrity** from **semantic review**:
+
+| Check | Scope |
+|---|---|
+| `lint` | IDs, references, relationship endpoint types, source-read status and passage locators, local files, ordinary Markdown links, and stale file fingerprints. |
+| `coverage` | Answer notes and current normal/counterexample/unknown check records for the questions you declared. |
+| `frontier` | Turns findings into candidate exploration, connection, or review tasks. |
+| `impact` | Traces a changed source, concept, relation, or claim to affected claims, notes, and questions. |
+| Semantic review | Reads actual source passages and explanations to assess support, meaning, conditions, contradictions, and answer quality. |
+
+Try the read-only CLI on the [fictional reading-club example](skill-suite/examples/reading-club/index.md), from the repository root:
+
+```sh
+python3 skill-suite/akm/scripts/knowledge.py lint --root skill-suite/examples/reading-club --map skill-suite/examples/reading-club/knowledge-map.json
+python3 skill-suite/akm/scripts/knowledge.py coverage --root skill-suite/examples/reading-club --map skill-suite/examples/reading-club/knowledge-map.json
+python3 skill-suite/akm/scripts/knowledge.py frontier --root skill-suite/examples/reading-club --map skill-suite/examples/reading-club/knowledge-map.json
+python3 skill-suite/akm/scripts/knowledge.py impact --root skill-suite/examples/reading-club --map skill-suite/examples/reading-club/knowledge-map.json --id S1
+```
+
+Existing Markdown, JSON, or RDF models stay in place. The agent builds a [hashed inspection map](skill-suite/akm/skills/akm/references/audit-map.md) from the relevant canonical files. That map is derived data; it must be refreshed from the actual content after changes.
+
+**Completeness is relative to your declared questions and scope.** A clean lint result does not establish factual truth. The CLI does not inspect unregistered files, prove source support, or perform OWL/RDF reasoning; semantic review and format-specific checks remain separate.
+
+## What has been exercised
+
+The [validation record](skill-suite/VALIDATION.md) distinguishes automated checks and synthetic behavior exercises. These include initial interviews, connected notes, rule changes propagated through model and wiki, a bounded maintenance cycle, missing-connection repair, and a second cycle that preserved knowledge without duplicate ingestion. This is evidence for those scenarios, not a guarantee across every domain or agent host.
+
+## The portable Markdown core
+
+The original public AKM core is part of the wider system. Use it directly through the adapters below, or let `akm-structure` select the storage roles your domain needs. The skill suite contains a pinned, licensed baseline; existing workspaces keep their own policies.
+
+### Storage roles
 
 These are the baseline storage roles. A new workspace built through the skill interview creates only the selected layers; source traceability and correction still apply when a dedicated folder is omitted. Existing workspaces keep their own INDEX, ROUTER, SCHEMA, and LOOP.
 
@@ -81,7 +174,7 @@ git clone https://github.com/DECK6/akm.git
 cd akm
 ```
 
-**Zero setup**: run your agent *inside* the cloned folder — root [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md) are included, so Claude Code, Codex, and OpenClaw pick up the operating rules automatically.
+Root [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md) provide operating instructions for agents that load those files from a project. Use a matching adapter below when your host needs an explicit entry point.
 
 To use AKM from anywhere:
 
@@ -204,9 +297,11 @@ The repo distributes the skill suite and the Markdown core (`99-system/`, `adapt
 
 ## Lineage
 
-AKM is influenced by two prior patterns, and reduces to neither:
+AKM brings together knowledge compilation, semantic modeling, and knowledge operations:
 
-- **[Karpathy's LLM Wiki](https://karpathy.bearblog.dev/)** — compile sources into an LLM-readable Markdown knowledge base (`raw/`, `entities/`, `concepts/`, `SCHEMA/index/log`). AKM adopts this as its Knowledge Layer pattern.
+- **LLM Wiki workflows** — ingest sources, synthesize explanations, query, lint, and maintain their connections. The [provenance record](skill-suite/akm/skills/akm/references/provenance.md) identifies the public implementations inspected and what was adopted.
+- **Ontology and knowledge-management research** — shared meanings, stable IDs, claim-level evidence, conditions, counterexamples, and joint revisions. See the [research-to-workflow mapping](skill-suite/akm/skills/akm/references/research-foundations.md).
+- **[gstack](https://github.com/garrytan/gstack)** — role-specific skills and deep discovery informed the suite design; gstack is not a runtime dependency.
 - **CMDS (Connect → Merge → Develop → Share)** — a process grammar for how knowledge moves through its lifecycle. AKM uses it as routing metadata (`CMDS:` frontmatter), not as folders.
 
 ## License
