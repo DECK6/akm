@@ -2,7 +2,7 @@
 
 각자의 도메인을 탐색하고 **AKM 지식 분류 구조 + 온톨로지 + LLM 위키**를 구축·운영하는 에이전트 지식관리 스킬 묶음입니다.
 
-사용자는 **`$akm` 하나**로 시작하고 운영할 수 있습니다. 진입점이 현재 요청에 맞는 14개 역할을 연결합니다. 관련 질문을 묶어 집요하게 탐색하고, 사용자가 더 생각나지 않거나 정리/중단을 요청할 때 발견 대화를 마칩니다. 첫 위키 노트 3편 이후 자료 통합·질의·검수·확장·학습·맥락 인계까지 이어집니다.
+사용자는 Codex의 **`$akm`**, Claude Code 직접 설치의 **`/akm`**, Claude 플러그인의 **`/akm:akm`** 중 사용하는 환경의 진입점 하나로 시작하고 운영할 수 있습니다. 진입점이 현재 요청에 맞는 14개 역할을 연결합니다. 관련 질문을 묶어 집요하게 탐색하고, 사용자가 더 생각나지 않거나 정리/중단을 요청할 때 발견 대화를 마칩니다. 첫 위키 노트 3편 이후 자료 통합·질의·검수·확장·학습·맥락 인계까지 이어집니다.
 
 [전체 안내](../README.ko.md) · [실행 예제](examples/reading-club/index.md) · [검증 기록과 한계](VALIDATION.md) · [설치](#로컬-설치)
 
@@ -29,6 +29,8 @@
 | `akm-context` | 맥락 저장·재개·역할 인계 |
 
 ## 사용 예
+
+아래 `$akm`과 `$akm-역할` 예시는 Claude Code 직접 설치에서 `/akm`과 `/akm-역할`, 플러그인에서 `/akm:akm`과 `/akm:akm-역할`로 바꿔 사용합니다.
 
 **“akm 구축 시작해줘”**, **“온톨로지 구축 시작해줘”**, **“llm wiki 구축 시작해줘”** 모두 `akm-discover` 시작 인터뷰로 연결합니다. 분야에 맞는 관련 질문을 묶어 제시하고 답에서 새 가지가 나오면 계속 탐색합니다. 신규 구축의 진입점을 다르게 말해도 인터뷰부터 시작하며, 재개와 명시적인 인터뷰 생략 요청은 구별합니다.
 
@@ -87,7 +89,7 @@ python3 akm/scripts/knowledge.py impact --root examples/reading-club --map examp
 
 ## 로컬 설치
 
-Python 3.10+가 있으면 Codex의 사용자 스킬 경로에 이 묶음을 연결할 수 있습니다. 아직 저장소가 없다면 다음 명령으로 받습니다.
+Python 3.10+가 있으면 Codex 또는 Claude Code의 사용자 스킬 경로에 이 묶음을 연결할 수 있습니다. 아직 저장소가 없다면 다음 명령으로 받습니다.
 
 ```sh
 git clone https://github.com/DECK6/akm.git
@@ -97,21 +99,36 @@ cd akm/skill-suite
 아래 명령은 이 README가 있는 `skill-suite/` 디렉터리에서 실행합니다. 저장소 루트에 있다면 먼저 `cd skill-suite`를 실행하세요.
 
 ```sh
-python3 akm/scripts/install.py
+# 사용할 호스트를 선택합니다.
+python3 akm/scripts/install.py                # Codex
+python3 akm/scripts/install.py --host claude  # Claude Code
 ```
 
-기본 목적지는 `CODEX_HOME/skills`, CODEX_HOME이 없으면 `~/.codex/skills`입니다. `--dest`로 다른 스킬 디렉터리를 지정할 수 있습니다. 기존의 같은 이름 스킬을 덮어쓰지 않으며, 동일 패키지의 링크는 재실행해도 유지합니다. 심볼릭 링크 방식이므로 설치 후 패키지 폴더를 이동하지 마세요.
+호스트를 생략하면 Codex입니다. Codex는 `CODEX_HOME/skills` 또는 `~/.codex/skills`, Claude Code는 `CLAUDE_CONFIG_DIR/skills` 또는 `~/.claude/skills`를 사용합니다. `--dest`로 다른 스킬 디렉터리를 지정할 수 있습니다. 기존의 같은 이름 스킬을 덮어쓰지 않으며, 동일 패키지의 링크는 재실행해도 유지합니다. 심볼릭 링크 방식이므로 설치 후 패키지 폴더를 이동하지 마세요.
 
 이 저장소에서 설치했다면 업데이트도 같은 `skill-suite/` 디렉터리에서 실행합니다. 연결된 스킬 본문이 갱신되고, 설치기를 다시 실행하면 새 역할도 연결됩니다.
 
 ```sh
 git pull --ff-only
-python3 akm/scripts/install.py
+python3 akm/scripts/install.py                # Codex
+python3 akm/scripts/install.py --host claude  # Claude Code
 ```
 
-설치 후 `$akm`으로 요청하세요. 자연어만으로 스킬을 자동 선택하는지는 호스트 환경에 따라 달라집니다.
+설치 후 Codex에서는 `$akm`, Claude Code에서는 `/akm`으로 요청하세요. 자연어만으로 스킬을 자동 선택하는지는 호스트 환경에 따라 달라집니다.
 
-`akm/`은 `.codex-plugin/plugin.json`을 갖춘 플러그인 소스입니다. 위 명령은 스킬을 직접 등록하며 마켓플레이스 등록을 수행하지 않습니다. 다른 에이전트에서는 `akm/skills/`의 형제 폴더를 함께 두고 `akm/SKILL.md`를 진입점으로 읽게 할 수 있습니다. 다른 에이전트의 자동 등록 동작은 별도 검증 대상입니다.
+프로젝트 전용 설치는 `--dest /path/to/project/.claude/skills`로 지정합니다. 그 경로에 같은 15개 역할을 연결하며 다른 호스트의 설치나 `CLAUDE.md`를 바꾸지 않습니다.
+
+직접 설치 대신 Claude Code에서 세션용 플러그인으로 불러올 수도 있습니다.
+
+```sh
+claude --plugin-dir /absolute/path/to/akm/skill-suite/akm
+# Claude Code 안에서:
+# /akm:akm 온톨로지 구축 시작해줘
+```
+
+`akm/`은 `.codex-plugin/plugin.json`과 `.claude-plugin/plugin.json`을 갖춘 플러그인 소스이며 두 호스트가 같은 `skills/`와 `scripts/`를 사용합니다. Python 설치기는 스킬을 직접 연결하고, `claude --plugin-dir`은 해당 세션에 플러그인을 불러옵니다. 두 방식 모두 마켓플레이스 등록을 수행하지 않습니다. 그 밖의 에이전트에서는 `akm/skills/`의 형제 폴더를 함께 두고 `akm/SKILL.md`를 진입점으로 읽게 할 수 있습니다. 다른 에이전트의 자동 등록 동작은 별도 검증 대상입니다.
+
+[Claude Code 설치·호출 안내](../adapters/claude-code/README.md)에서 전역/프로젝트 설치와 코어 어댑터의 차이를 확인할 수 있습니다.
 
 공통 규약은 `akm/skills/akm/references/`에 있습니다. 모든 역할은 필요한 규약과 자기 지침만 읽습니다. 특정 사용자의 경로나 도메인 데이터, 유료 API, 그래프 DB, gstack 설치가 필수로 들어 있지 않습니다.
 

@@ -1,0 +1,8 @@
+{
+  "name": "akm",
+  "version": "0.2.1",
+  "description": "Domain-adapted knowledge management: discovery, personalized AKM structure, connected ontology and LLM wiki, and ongoing knowledge operations.",
+  "author": { "name": "AKM" },
+  "repository": "https://github.com/DECK6/akm",
+  "license": "MIT"
+}

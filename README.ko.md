@@ -4,23 +4,28 @@
 
 **자신의 분야에 맞는 온톨로지와 LLM 위키를 함께 만들고, 이후 탐색·확장·연결 보완·검증·재개까지 운영하는 종합 지식관리 스킬입니다.**
 
-사용자는 **`$akm` 하나**로 요청하고, 진입점이 14개 전문 역할을 연결합니다. 기존 공개 AKM의 분류·저장 구조는 사용자별로 선택하는 기반 모듈로 포함됩니다. 지식은 Markdown과 원본 파일로 남으며 DB·서버·유료 API·gstack 설치가 필수는 아닙니다.
+사용자는 Codex에서는 **`$akm`**, Claude Code에서는 **`/akm`** 하나로 요청하고, 진입점이 14개 전문 역할을 연결합니다. 기존 공개 AKM의 분류·저장 구조는 사용자별로 선택하는 기반 모듈로 포함됩니다. 지식은 Markdown과 원본 파일로 남으며 DB·서버·유료 API·gstack 설치가 필수는 아닙니다.
 
 [스킬 15개와 상세 사용법](skill-suite/README.md) · [실행 가능한 예제](skill-suite/examples/reading-club/index.md) · [검증 기록과 한계](skill-suite/VALIDATION.md)
 
 ## 설치와 시작
 
-Codex에서는 Python 3.10+로 설치할 수 있습니다.
+Python 3.10+로 사용하는 호스트에 맞춰 설치합니다.
 
 ```sh
 git clone https://github.com/DECK6/akm.git
 cd akm
+# Codex (기본값)
 python3 skill-suite/akm/scripts/install.py
+# Claude Code
+python3 skill-suite/akm/scripts/install.py --host claude
 ```
 
-기본 설치 경로는 `CODEX_HOME/skills`, 설정하지 않았다면 `~/.codex/skills`입니다. 기존의 같은 이름 스킬을 덮어쓰지 않습니다. 심볼릭 링크 방식이므로 클론 폴더를 유지하세요. 다른 호스트의 등록 방식과 설치 옵션은 [상세 안내](skill-suite/README.md#로컬-설치)를 참고하세요.
+Codex는 `CODEX_HOME/skills` 또는 `~/.codex/skills`, Claude Code는 `CLAUDE_CONFIG_DIR/skills` 또는 `~/.claude/skills`에 설치됩니다. 기존의 같은 이름 스킬을 덮어쓰지 않습니다. 심볼릭 링크 방식이므로 클론 폴더를 유지하세요. 다른 호스트의 등록 방식과 설치 옵션은 [상세 안내](skill-suite/README.md#로컬-설치)를 참고하세요.
 
-설치 후 아래처럼 요청합니다. 호스트가 자연어 요청에서 자동으로 스킬을 선택하지 않으면 `$akm`을 붙이세요.
+설치 후 아래처럼 요청합니다. 호스트가 자연어 요청에서 자동으로 스킬을 선택하지 않으면 Codex는 `$akm`, Claude Code는 `/akm`을 붙이세요. 아래 `$akm` 예시도 Claude Code에서는 `/akm`으로 바꿔 사용합니다.
+
+직접 설치 대신 세션용 플러그인으로 사용할 수도 있습니다. `claude --plugin-dir /absolute/path/to/akm/skill-suite/akm`으로 실행하고 `/akm:akm`을 호출합니다. [Claude Code 안내](adapters/claude-code/README.md)에 두 방식을 정리했습니다.
 
 > akm 구축 시작해줘
 >
@@ -36,7 +41,8 @@ python3 skill-suite/akm/scripts/install.py
 
 ```sh
 git pull --ff-only
-python3 skill-suite/akm/scripts/install.py
+python3 skill-suite/akm/scripts/install.py             # Codex
+python3 skill-suite/akm/scripts/install.py --host claude  # Claude Code
 ```
 
 ## 온톨로지와 위키가 함께 바뀝니다

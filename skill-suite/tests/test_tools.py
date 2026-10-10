@@ -24,6 +24,61 @@ class InstallationTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(PACKAGE/'scripts/install.py'),
                                '--dest', str(dest)], capture_output=True, text=True, env=env)
 
+    def test_host_default_paths_are_isolated(self):
+        for host, variable in [('codex', 'CODEX_HOME'), ('claude', 'CLAUDE_CONFIG_DIR')]:
+            with self.subTest(host=host):
+                base = scratch()
+                env = dict(os.environ, CODEX_HOME=str(base/'codex'),
+                           CLAUDE_CONFIG_DIR=str(base/'claude'))
+                result = subprocess.run([sys.executable, str(PACKAGE/'scripts/install.py'),
+                                         '--host', host], capture_output=True, text=True, env=env)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(Path(json.loads(result.stdout)['destination']), Path(env[variable])/'skills')
+                self.assertEqual(json.loads(result.stdout)['host'], host)
+                self.assertEqual(len(list((Path(env[variable])/'skills').iterdir())), 15)
+                other = base/('claude' if host == 'codex' else 'codex')
+                self.assertFalse(other.exists())
+                repeated = subprocess.run([sys.executable, str(PACKAGE/'scripts/install.py'),
+                                           '--host', host], capture_output=True, text=True, env=env)
+                self.assertEqual(repeated.returncode, 0, repeated.stderr)
+                self.assertEqual(json.loads(repeated.stdout)['created'], [])
+
+    def test_claude_default_and_explicit_destination(self):
+        base = scratch()
+        env = dict(os.environ, HOME=str(base), CLAUDE_CONFIG_DIR='', CODEX_HOME=str(base/'codex'))
+        command = [sys.executable, str(PACKAGE/'scripts/install.py'), '--host', 'claude']
+        result = subprocess.run(command, capture_output=True, text=True, env=env)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(Path(json.loads(result.stdout)['destination']), base/'.claude/skills')
+        custom = base/'project/.claude/skills'
+        result = subprocess.run(command+['--dest', str(custom)], capture_output=True, text=True, env=env)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((custom/'akm/SKILL.md').is_file())
+        self.assertFalse((base/'codex').exists())
+
+    def test_claude_conflict_preserves_existing(self):
+        config = scratch()
+        dest = config/'skills'
+        (dest/'akm').mkdir(parents=True)
+        (dest/'akm/SKILL.md').write_text('user-owned')
+        result = subprocess.run([sys.executable, str(PACKAGE/'scripts/install.py'), '--host', 'claude'],
+                                capture_output=True, text=True,
+                                env=dict(os.environ, CLAUDE_CONFIG_DIR=str(config)))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Installation conflict', result.stderr)
+        self.assertEqual((dest/'akm/SKILL.md').read_text(), 'user-owned')
+        self.assertEqual([p.name for p in dest.iterdir()], ['akm'])
+
+    def test_no_host_keeps_codex_default(self):
+        base = scratch()
+        result = subprocess.run([sys.executable, str(PACKAGE/'scripts/install.py')],
+                                capture_output=True, text=True,
+                                env=dict(os.environ, CODEX_HOME=str(base/'codex'),
+                                         CLAUDE_CONFIG_DIR=str(base/'claude')))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((base/'codex/skills/akm/SKILL.md').is_file())
+        self.assertFalse((base/'claude').exists())
+
     def test_unicode_destination_under_ascii_locale(self):
         dest = scratch()/'설치'
         env = dict(os.environ, LC_ALL='C', PYTHONUTF8='0', PYTHONCOERCECLOCALE='0')
@@ -220,6 +275,26 @@ class PackageTests(unittest.TestCase):
         manifest=json.loads((PACKAGE/'.codex-plugin/plugin.json').read_text())
         self.assertEqual(manifest['name'], PACKAGE.name)
         self.assertTrue((PACKAGE/manifest['skills']).is_dir())
+
+    def test_claude_package_contains_shared_runtime_after_copy(self):
+        import shutil
+        cached = scratch()/'plugin-cache/akm'
+        shutil.copytree(PACKAGE, cached)
+        manifest = json.loads((cached/'.claude-plugin/plugin.json').read_text())
+        codex = json.loads((cached/'.codex-plugin/plugin.json').read_text())
+        self.assertEqual(manifest['name'], 'akm')
+        self.assertEqual(manifest['version'], codex['version'])
+        skills = list((cached/'skills').glob('*/SKILL.md'))
+        self.assertEqual(len(skills), 15)
+        for skill in skills:
+            self.assertTrue(skill.resolve().is_relative_to(cached.resolve()))
+            for target in re.findall(r'\]\(([^)]+)\)', skill.read_text()):
+                if '://' not in target and not target.startswith('#'):
+                    self.assertTrue((skill.parent/target.split('#')[0]).is_file(), target)
+        for script in ['workspace.py', 'knowledge.py']:
+            result = subprocess.run([sys.executable, str(cached/'scripts'/script), '--help'],
+                                    cwd=cached.parent, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
 
 
 if __name__ == '__main__':

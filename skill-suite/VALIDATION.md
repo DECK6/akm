@@ -1,6 +1,24 @@
-# Validation — 2026-10-09
+# Validation — 2026-10-10
 
 This release was checked as a portable local skill suite. Behavioral exercises used synthetic users and domains; they are not real-user research, a guarantee of factual accuracy, or cross-model benchmarks.
+
+## 0.2.1 — Claude Code compatibility
+
+- Python suite: 35 tests passed. New cases exercise host-specific paths, the default Codex behavior, Claude configuration/default/custom destinations, idempotent reruns, preserved conflicts, and the complete package after relocation.
+- Claude Code 2.1.274: `claude plugin validate --strict --json skill-suite/akm` passed with no errors or warnings.
+- Native initialization in isolated configuration/workspace directories listed all 15 expected commands for each layout: personal skills, project skills, and the session-only plugin. The plugin listed `akm:akm` and its 14 namespaced roles; direct installations listed `akm` and its 14 roles.
+- The startup checks requested only the native command catalog. They did not request a Claude model answer, repeat the semantic exercises on Claude, or measure natural-language selection recall. The shared skill bodies and domain contracts are unchanged except for host invocation and package-path guidance.
+- Personal and project installations use symlinks. Native Windows remains unverified. A local `--plugin-dir` session is covered; marketplace distribution is not configured or tested.
+
+Reproduce installation and manifest checks from the repository root:
+
+```sh
+python3 -m unittest discover -s skill-suite/tests -v
+claude plugin validate --strict --json skill-suite/akm
+python3 skill-suite/akm/scripts/install.py --host claude --dest /path/to/test-project/.claude/skills
+```
+
+Start Claude Code in that test project and inspect `/skills`. For plugin discovery, launch `claude --plugin-dir /absolute/path/to/akm/skill-suite/akm` and inspect the `akm:` commands. Use the [Claude guide](../adapters/claude-code/README.md) for installation scopes and invocation.
 
 ## 0.2.0 — operation after setup
 

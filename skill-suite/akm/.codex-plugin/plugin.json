@@ -1,6 +1,6 @@
 {
   "name": "akm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Domain-adapted agent knowledge management: discovery, personalized AKM structure, ontology, LLM wiki and continuous knowledge operations.",
   "author": {
     "name": "AKM"

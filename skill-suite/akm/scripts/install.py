@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add the complete sibling skill set without replacing existing entries."""
+"""Link all AKM skills into Codex or Claude Code without replacing existing entries."""
 import argparse
 import json
 import os
@@ -34,13 +34,18 @@ def install(destination):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    default = Path(os.environ.get('CODEX_HOME', str(Path.home()/'.codex'))) / 'skills'
-    parser.add_argument('--dest', type=Path, default=default)
+    parser.add_argument('--host', choices=('codex', 'claude'), default='codex',
+                        help='target host (default: codex); claude uses CLAUDE_CONFIG_DIR or ~/.claude')
+    parser.add_argument('--dest', type=Path,
+                        help='explicit skills directory; overrides the selected host default')
     args = parser.parse_args()
+    variable, fallback = ('CLAUDE_CONFIG_DIR', '.claude') if args.host == 'claude' else ('CODEX_HOME', '.codex')
+    destination = args.dest if args.dest is not None else Path(os.environ.get(variable) or Path.home()/fallback)/'skills'
     try:
-        result = install(args.dest.expanduser().absolute())
+        result = install(destination.expanduser().absolute())
     except (ValueError, OSError) as error:
         parser.exit(1, str(error) + '\n')
+    result['host'] = args.host
     print(json.dumps(result, ensure_ascii=True, indent=2))
 
 

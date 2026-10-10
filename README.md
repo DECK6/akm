@@ -2,7 +2,7 @@
 
 **Build and keep improving a knowledge system for your own domain: a connected ontology, an LLM wiki, and the structure to operate them.**
 
-Use one entry point, **`$akm`**, from the first interview through ongoing research, expansion, connection repair, validation, and resumption. AKM routes the work across 14 specialist roles. Markdown and source files stay yours; no database, server, paid API, or gstack installation is required.
+Use one entry point, **`$akm` in Codex or `/akm` in Claude Code**, from the first interview through ongoing research, expansion, connection repair, validation, and resumption. AKM routes the work across 14 specialist roles. Markdown and source files stay yours; no database, server, paid API, or gstack installation is required.
 
 [한국어](README.ko.md) · [Skill guide](skill-suite/README.md) · [All 15 skills](skill-suite/README.md#스킬-구성) · [Runnable example](skill-suite/examples/reading-club/index.md) · [Validation and limits](skill-suite/VALIDATION.md)
 
@@ -21,17 +21,22 @@ The domain comes from you: a research topic, a craft, an organization's work, a 
 
 ## Install once, start with your domain
 
-For Codex, with Python 3.10+:
+With Python 3.10+, choose your host:
 
 ```sh
 git clone https://github.com/DECK6/akm.git
 cd akm
+# Codex (the default)
 python3 skill-suite/akm/scripts/install.py
+# Claude Code
+python3 skill-suite/akm/scripts/install.py --host claude
 ```
 
-The installer links all 15 skills into `CODEX_HOME/skills` (or `~/.codex/skills`). Keep the clone in place. Re-running adds missing roles without replacing conflicting entries; `--dest` selects another skill directory. The [installation guide](skill-suite/README.md#로컬-설치) covers the plugin source and other agent environments. Automatic skill discovery depends on the host; `$akm` is the explicit entry point.
+The installer links all 15 skills into `CODEX_HOME/skills` (or `~/.codex/skills`) for Codex, or `CLAUDE_CONFIG_DIR/skills` (or `~/.claude/skills`) for Claude Code. Keep the clone in place. Re-running adds missing roles without replacing conflicting entries; `--dest` selects another skill directory. The [installation guide](skill-suite/README.md#로컬-설치) covers the plugin source and other agent environments. Automatic skill discovery depends on the host. Use `$akm` in Codex or `/akm` in Claude Code. Both share the same skill bodies and knowledge contracts.
 
-Start with any of these:
+For a session-only Claude plugin, run `claude --plugin-dir /absolute/path/to/akm/skill-suite/akm` and invoke `/akm:akm`. This is an alternative to the direct skill installation; no marketplace registration is required. See the [Claude Code guide](adapters/claude-code/README.md).
+
+Start with any of these (replace `$akm` with `/akm` in Claude Code):
 
 > $akm Build a knowledge system for my field. Interview me about the questions, examples, and decisions that matter, then help me build the ontology and wiki.
 
@@ -49,12 +54,13 @@ To update an installation made from this clone:
 
 ```sh
 git pull --ff-only
-python3 skill-suite/akm/scripts/install.py
+python3 skill-suite/akm/scripts/install.py             # Codex
+python3 skill-suite/akm/scripts/install.py --host claude  # Claude Code
 ```
 
 ## Keep using the same entry point
 
-You do not need to memorize role names. Ask `$akm` or use a natural-language request:
+You do not need to memorize role names. Ask `$akm` (Codex), `/akm` (Claude Code), or use a natural-language request:
 
 | Your request | What the agent does |
 |---|---|
