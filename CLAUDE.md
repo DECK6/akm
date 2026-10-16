@@ -5,6 +5,8 @@ This repository is an AKM (Agent Knowledge Management) instance, and you are at 
 - When you need knowledge, context, or procedures, first read `99-system/INDEX.md` and all files in `40-memory/` (both are short)
 - Lookup: INDEX → layer folder (`20-knowledge/` knowledge, `30-context/` context, `50-procedures/` procedures)
 - Before saving any knowledge, experience, or procedure, follow the classification tree in `99-system/ROUTER.md`. Never save to arbitrary locations
+- Preferences, interpretations, and constraints about a user/org/project/domain belong in `30-context/` (ROUTER Q4, before Q5), even when asked to "remember" them. Follow ROUTER's intake staging and update the canonical note rather than duplicate it
+- Add a one-line `40-memory/` pointer to that note only for stable essentials needed before acting every session. Keep details, examples, and exceptions in the canonical note; never store or copy the full body into memory
 - **Inbox-first**: every new note/intake lands in `00-inbox/` first and stays up to 7 days; do NOT write straight into a final layer. A weekly inbox triage job sweeps items past 7 days into the correct layer via `99-system/ROUTER.md`. Exception: explicitly archival `10-sources/` originals and `60-actions/runs/` execution logs may be written directly.
 - For bounded multi-step or artifact-producing work that needs an execution contract, copy `99-system/templates/task-contract.md` and run `node scripts/lint.mjs --task-contract <contract>` before execution
 - Before marking durable, public, or high-stakes work complete, select and apply the Tier 0–3 checks in `99-system/VERIFICATION.md`

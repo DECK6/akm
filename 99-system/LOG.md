@@ -29,3 +29,5 @@ Append-only change history. Format: `YYYY-MM-DD | change | note`
 - 2026-10-10 | Reworked English/Korean READMEs and skill guide around the complete knowledge lifecycle, shared ontology/wiki, installation, updates, bounded maintenance, examples, and verification limits.
 
 - 2026-10-10 | Added Claude Code personal/project skill installation, shared native plugin packaging, invocation/path guidance, and bilingual documentation; verified all 15 commands in each Claude layout and 35 Python checks.
+
+- 2026-10-16 | Integrated [PR #2](https://github.com/DECK6/akm/pull/2) and clarified preference bodies, conditional memory pointers, and updates in ROUTER, adapter snippets, root instructions, and compliance checks. → [[ROUTER]]

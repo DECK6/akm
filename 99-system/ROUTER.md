@@ -93,7 +93,7 @@ input (from 00-inbox after staging)
 ## Tie-breaking rules
 
 - **Failure vs procedure**: always record the failure in `70-evaluation/` first. Fixing the procedure comes after (Learn Back)
-- **Preference vs memory**: the full note lives in `30-context/users/`; only the per-session essentials become a `40-memory/` pointer
+- **Preference vs memory (Q4 before Q5)**: after intake staging, the full preference, interpretation, or constraint belongs in the matching `30-context/` location (`users/` for a user, `projects/`, `domains/`, or `constraints/` for other scopes), even when asked to "remember" it. Update an existing canonical note rather than duplicate it. Only stable essentials needed before acting every session get a one-line `40-memory/` pointer to that note; details, examples, and exceptions stay in context. Update any affected pointer when the canonical note changes
 - **Knowledge vs context**: "Is it true for anyone?" YES → `20-knowledge/`. "True only for this user/project?" → `30-context/`
 - **Knowledge vs procedure**: "what to know" → `20-knowledge/`. "how to execute" → `50-procedures/`
 
@@ -116,4 +116,5 @@ Before writing an operational surface, route detail to the lowest-frequency cano
 | "Putting long knowledge in agent memory slowed every session" — a failure experience | Q1 NO → Q2 YES (may recur) | `70-evaluation/failure-patterns/` + 1-line pointer in `40-memory/` |
 | A repeatable upscale-then-download procedure for an image tool | Q1 NO → Q2 NO → Q3 YES | `50-procedures/skills/` |
 | "This user prefers extremely concise responses" | Q1–Q3 NO → Q4 YES (short & stable) | `30-context/users/` + `40-memory/` pointer |
+| "Remember this project's temporary review deadline" | Q1–Q3 NO → Q4 YES (temporary project constraint) | `30-context/projects/` or `30-context/constraints/`; no every-session memory pointer |
 | Yesterday's successful build output | Q1–Q6 NO → Q7 (needed for reproduction? plain success log → NO) | not stored (only `60-actions/` if it failed or contains a decision) |

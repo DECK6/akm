@@ -1,7 +1,7 @@
 # AKM Adapter Specification
 
 An adapter is the **thin entry point** that makes a harness (agent runtime) read and write the AKM core.
-Adapters never duplicate core rules — they only point at them. The rules themselves always live in `99-system/`.
+Adapters point at core rules and repeat only short routing guards needed at installation. The authoritative rules always live in `99-system/`; the preference-vs-memory guard summarizes ROUTER Q4 before Q5.
 
 ## The four questions every adapter must answer
 
@@ -19,7 +19,7 @@ Each adapter README fills in this table. If any cell is empty, it is not an adap
 When a harness has its own memory (Claude Code auto-memory, OpenClaw `MEMORY.md`, a custom agent's brain):
 
 - **Native memory**: operating pointers needed only by that harness + a pointer to the AKM root
-- **AKM `40-memory/`**: operating rules every harness must share
+- **AKM `40-memory/`**: one-line pointers to stable operating essentials every harness needs before acting; full bodies stay in their ROUTER-selected layers
 - Never write the same content in both places. One body; everywhere else, pointers
 
 ## Installation (shared)
@@ -34,6 +34,7 @@ Run a fresh session and verify the agent actually follows the system — install
 
 - [ ] Reads `40-memory/` and `99-system/INDEX.md` before using knowledge
 - [ ] Consults `99-system/ROUTER.md` before storing anything (ask it to store a preference and a procedure; check where they land)
+- [ ] Routes a preference's full body, details, and exceptions to `30-context/`, even for "remember this"; adds a linked one-line `40-memory/` pointer only for stable every-session essentials. Updating a preference updates its canonical note and affected pointer; a temporary project constraint gets no every-session pointer
 - [ ] Selects the applicable Tier 0–3 checks in `99-system/VERIFICATION.md` before declaring durable, public, or high-stakes work complete
 - [ ] Consults `99-system/LOOP.md` on failure and records under `70-evaluation/`
 - [ ] Updates `INDEX.md` and appends to `LOG.md` when creating notes — without being asked
